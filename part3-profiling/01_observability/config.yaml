@@ -42,4 +42,4 @@ general:
       phoenix:
         _type: phoenix
         project: bielik-nest-workshop
-        endpoint: "http://localhost:${PHOENIX_PORT:-6006}/v1/traces"
+        endpoint: "${PHOENIX_COLLECTOR_ENDPOINT:-http://localhost:6006/v1/traces}"

@@ -9,3 +9,4 @@ build/
 venv/
 bielik_output/
 .DS_Store
+.env.docker
