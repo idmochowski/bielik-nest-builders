@@ -4,7 +4,7 @@ This document describes how to deploy **Bielik-Minitron-7B-v3.0-Instruct** with 
 
 ## Requirements
 
-- GPU: 1x A100 40GB (or equivalent; ~16GB VRAM minimum with BF16)
+- GPU: NVIDIA B200 (fractional GPU, 0.5 GPU sufficient for single instance)
 - vLLM >= 0.8.x (recommended latest stable)
 - Python 3.10+
 
@@ -114,41 +114,14 @@ Participants connect via NeMo Agent Toolkit using the OpenAI-compatible API.
 
 **Model footprint:** ~15 GB VRAM (7.35B params in BF16)
 **B200 capacity:** 192 GB HBM3e per GPU
+**Measured throughput:** ~200-230 tokens/sec on 0.5 GPU B200
 
-**Recommended: 2 vLLM instances on 2 GPUs**
+**Current setup:** Single instance on 0.5 GPU B200 - tested and working.
 
-Each B200 can comfortably serve ~20 concurrent requests for a 7B model
-(~1-2 GB KV cache per request at max_model_len=8192, leaving ~175 GB headroom).
-The remaining 2 GPUs are available as hot standby or for other demos.
-
-```bash
-# Instance 1 - GPU 0
-CUDA_VISIBLE_DEVICES=0 vllm serve speakleash/Bielik-Minitron-7B-v3.0-Instruct \
-    --served-model-name bielik-minitron-7b \
-    --enable-auto-tool-choice \
-    --tool-parser-plugin ./bielik-tools/tools/bielik_vllm_tool_parser.py \
-    --tool-call-parser bielik \
-    --chat-template ./bielik-tools/tools/bielik_advanced_chat_template.jinja \
-    --dtype bfloat16 \
-    --max-model-len 8192 \
-    --port 8000 \
-    --host 0.0.0.0
-
-# Instance 2 - GPU 1
-CUDA_VISIBLE_DEVICES=1 vllm serve speakleash/Bielik-Minitron-7B-v3.0-Instruct \
-    --served-model-name bielik-minitron-7b \
-    --enable-auto-tool-choice \
-    --tool-parser-plugin ./bielik-tools/tools/bielik_vllm_tool_parser.py \
-    --tool-call-parser bielik \
-    --chat-template ./bielik-tools/tools/bielik_advanced_chat_template.jinja \
-    --dtype bfloat16 \
-    --max-model-len 8192 \
-    --port 8001 \
-    --host 0.0.0.0
-```
-
-Ideally place an nginx/HAProxy load balancer in front, or use NAT's built-in
-multi-endpoint round-robin:
+At ~200 tok/s with typical 500-token workshop outputs (~2.5s per request),
+a single instance handles moderate concurrent load via vLLM's continuous batching.
+For 40 simultaneous participants, consider 2 instances behind a load balancer
+or NAT's built-in multi-endpoint round-robin:
 
 ```yaml
 llms:
