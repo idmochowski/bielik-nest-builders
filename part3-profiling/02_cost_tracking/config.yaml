@@ -1,0 +1,39 @@
+# =============================================================
+# Exercise 2: Cost Tracking
+# =============================================================
+
+llms:
+  bielik:
+    _type: openai
+    base_url: "${VLLM_BASE_URL}"
+    model: "${VLLM_MODEL_NAME}"
+    api_key: "${VLLM_API_KEY}"
+    temperature: 0.7
+    max_tokens: 2048
+
+functions:
+  wiki_search:
+    _type: wiki_search
+    max_results: 2
+
+  current_time:
+    _type: current_datetime
+
+workflow:
+  _type: react_agent
+  tool_names:
+    - wiki_search
+    - current_time
+  llm_name: bielik
+  max_tool_calls: 5
+  parse_agent_response_max_retries: 3
+  raise_on_parsing_failure: false
+  additional_instructions: "Używaj jak najmniej wywołań narzędzi. Gdy masz wystarczająco informacji, natychmiast podaj Final Answer. Nie szukaj dodatkowych powiązanych tematów."
+
+general:
+  telemetry:
+    tracing:
+      phoenix:
+        _type: phoenix
+        project: bielik-cost-tracking
+        endpoint: "http://localhost:${PHOENIX_PORT:-6006}/v1/traces"

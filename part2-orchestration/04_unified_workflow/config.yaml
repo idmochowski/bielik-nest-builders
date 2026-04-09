@@ -1,0 +1,60 @@
+# =============================================================
+# Exercise 4: Unified Multi-Agent Workflow
+# =============================================================
+# This is the capstone exercise for Part 2.
+#
+# It composes TWO agents from different frameworks:
+#   1. LangChain ReAct research agent (from Exercise 2)
+#   2. CrewAI writing crew (from Exercise 3)
+#
+# Workflow: User query -> Research Agent -> Writing Crew -> Report
+# =============================================================
+
+llms:
+  bielik:
+    _type: openai
+    base_url: "${VLLM_BASE_URL}"
+    model: "${VLLM_MODEL_NAME}"
+    api_key: "${VLLM_API_KEY}"
+    temperature: 0.7
+    max_tokens: 2048
+
+functions:
+  # --- Tools for the research agent ---
+  wiki_search:
+    _type: wiki_search
+    max_results: 2
+
+  current_time:
+    _type: current_datetime
+
+  # --- LangChain research agent (from Exercise 2) ---
+  research_agent:
+    _type: langchain_research_agent
+    llm_ref: bielik
+    tools_ref:
+      - wiki_search
+      - current_time
+    description: "Zbadaj temat dokładnie korzystając z Wikipedii. Zwraca szczegółowe wyniki badań."
+    max_iterations: 10
+
+  # --- CrewAI writing crew (from Exercise 3) ---
+  writing_crew:
+    _type: crewai_writing_crew
+    llm_ref: bielik
+    description: "Analizuj wyniki badań i stwórz uporządkowany raport z wnioskami."
+
+# --- Unified workflow ---
+# The orchestrator agent decides which sub-agent to call.
+# Typical flow: research_agent first, then writing_crew with the findings.
+workflow:
+  _type: react_agent
+  tool_names:
+    - research_agent
+    - writing_crew
+  llm_name: bielik
+  max_tool_calls: 5
+  verbose: true
+  parse_agent_response_max_retries: 3
+  raise_on_parsing_failure: false
+  additional_instructions: "Używaj jak najmniej wywołań narzędzi. Gdy masz wystarczająco informacji, natychmiast podaj Final Answer. Nie szukaj dodatkowych powiązanych tematów."

@@ -1,0 +1,11 @@
+# NeMo Agent Toolkit (core + langchain + crewai)
+nvidia-nat
+nvidia-nat-langchain
+nvidia-nat-crewai
+
+# Observability
+nvidia-nat-phoenix
+arize-phoenix>=14
+
+# Utilities
+python-dotenv

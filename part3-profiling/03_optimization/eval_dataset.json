@@ -1,0 +1,42 @@
+[
+  {
+    "id": "q1",
+    "question": "Jaka jest liczba ludności Warszawy według ostatniego spisu?",
+    "answer": "Warszawa liczy około 1,86 miliona mieszkańców."
+  },
+  {
+    "id": "q2",
+    "question": "Kto napisał Pana Tadeusza i w którym roku został wydany?",
+    "answer": "Pan Tadeusz został napisany przez Adama Mickiewicza i wydany w 1834 roku."
+  },
+  {
+    "id": "q3",
+    "question": "Jaka jest wysokość Rysów, najwyższego szczytu w Polsce?",
+    "answer": "Rysy mają 2499 metrów (8199 stóp) nad poziomem morza."
+  },
+  {
+    "id": "q4",
+    "question": "Oblicz powierzchnię Polski w milach kwadratowych, jeśli wynosi 312 696 kilometrów kwadratowych.",
+    "answer": "Powierzchnia Polski wynosi około 120 733 mil kwadratowych."
+  },
+  {
+    "id": "q5",
+    "question": "W którym roku Polska przystąpiła do Unii Europejskiej?",
+    "answer": "Polska przystąpiła do Unii Europejskiej 1 maja 2004 roku."
+  },
+  {
+    "id": "q6",
+    "question": "Ile obiektów z listy UNESCO znajduje się w Polsce?",
+    "answer": "Polska ma 17 obiektów wpisanych na listę UNESCO."
+  },
+  {
+    "id": "q7",
+    "question": "Ile wynosi 2137 * 42 + 1000?",
+    "answer": "Wynik to 90 754."
+  },
+  {
+    "id": "q8",
+    "question": "Kim był Mikołaj Kopernik i jaki był jego główny wkład w naukę?",
+    "answer": "Mikołaj Kopernik był polskim astronomem, który sformułował model heliocentryczny Układu Słonecznego, umieszczając Słońce w centrum zamiast Ziemi."
+  }
+]

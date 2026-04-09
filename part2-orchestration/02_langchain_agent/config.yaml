@@ -1,0 +1,46 @@
+# =============================================================
+# Exercise 2: LangChain ReAct Agent as NAT Function
+# =============================================================
+# This config registers a LangChain ReAct research agent
+# as a NeMo Agent Toolkit Function, making it composable
+# with other agents in a unified workflow.
+# =============================================================
+
+llms:
+  bielik:
+    _type: openai
+    base_url: "${VLLM_BASE_URL}"
+    model: "${VLLM_MODEL_NAME}"
+    api_key: "${VLLM_API_KEY}"
+    temperature: 0.7
+    max_tokens: 2048
+
+functions:
+  # Built-in tools that the LangChain agent will use
+  wiki_search:
+    _type: wiki_search
+    max_results: 2
+
+  current_time:
+    _type: current_datetime
+
+  # Our custom LangChain agent registered as a NAT Function
+  research_agent:
+    _type: langchain_research_agent
+    llm_ref: bielik
+    tools_ref:
+      - wiki_search
+      - current_time
+    description: "Agent badawczy wyszukujący i podsumowujący informacje z Wikipedii"
+    max_iterations: 10
+
+# Use the research agent as the workflow entry point
+workflow:
+  _type: react_agent
+  tool_names:
+    - research_agent
+  llm_name: bielik
+  max_tool_calls: 5
+  parse_agent_response_max_retries: 3
+  raise_on_parsing_failure: false
+  additional_instructions: "Używaj jak najmniej wywołań narzędzi. Gdy masz wystarczająco informacji, natychmiast podaj Final Answer. Nie szukaj dodatkowych powiązanych tematów."
