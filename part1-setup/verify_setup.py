@@ -10,7 +10,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 BASE_URL = os.getenv("VLLM_BASE_URL", "http://localhost:8000/v1")
-MODEL_NAME = os.getenv("VLLM_MODEL_NAME", "bielik-minitron-7b")
+MODEL_NAME = os.getenv("VLLM_MODEL_NAME", "speakleash/Bielik-Minitron-7B-v3.0-Instruct")
 API_KEY = os.getenv("VLLM_API_KEY", "EMPTY")
 
 checks_passed = 0
