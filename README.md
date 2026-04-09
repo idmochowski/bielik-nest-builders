@@ -8,7 +8,7 @@ Hands-on workshop: Build, orchestrate, profile and optimize multi-agent AI workf
 +------------------+     +--------------------+     +------------------+
 |   Run:ai         |     |   vLLM Server      |     |  NeMo Agent      |
 |   Workspace      |---->|   Bielik-Minitron  |<----|  Toolkit (NAT)   |
-|   (Jupyter/Code) |     |   7B + Tool Calling|     |  Orchestration   |
+|   (Jupyter/Code) |     |   7B               |     |  Orchestration   |
 +------------------+     +--------------------+     +------------------+
                                                            |
                                               +------------+------------+
@@ -23,7 +23,7 @@ Hands-on workshop: Build, orchestrate, profile and optimize multi-agent AI workf
 2. **LangChain ReAct agent** - Research agent registered as a NAT Function
 3. **CrewAI agent crew** - Analyst + Writer crew registered as a NAT Function
 4. **Unified multi-agent workflow** - Both agents composed via YAML config
-5. **Observable, profiled workflow** - Phoenix tracing, cost tracking, optimization
+5. **Observable, profiled workflow** - Phoenix tracing, Token Factory cost tracking, optimization
 
 ## Agenda
 
@@ -51,7 +51,8 @@ Everything else is pre-installed in your Run:ai workspace.
 ```
 bielik-nest-builders/
 ├── docs/
-│   └── vllm-deployment.md          # vLLM config for infra team
+│   ├── vllm-deployment.md          # vLLM config for infra team
+│   └── nat-briefing-for-bielik-dev.md  # NAT briefing for Bielik presenter
 ├── part1-setup/
 │   └── verify_setup.py             # Verify connectivity to Bielik endpoint
 ├── part2-orchestration/             # [18:30-19:30] Bielik Team
@@ -60,8 +61,8 @@ bielik-nest-builders/
 │   ├── 03_crewai_agent/            # CrewAI crew as NAT Function
 │   └── 04_unified_workflow/        # Compose agents into unified workflow
 ├── part3-profiling/                 # [19:50-20:30] NVIDIA
-│   ├── 01_observability/           # Phoenix tracing setup
-│   ├── 02_cost_tracking/           # Token usage & cost analysis
+│   ├── 01_observability/           # Phoenix tracing via NAT plugin
+│   ├── 02_cost_tracking/           # Token Factory pricing & cost analysis
 │   └── 03_optimization/            # Hyperparameter optimization
 ├── requirements.txt
 └── .env.example
@@ -98,13 +99,14 @@ python part1-setup/verify_setup.py
 
 ## Bielik Model Configuration
 
-The workshop uses **Bielik-Minitron-7B-v3.0-Instruct** served via vLLM with tool calling enabled.
+The workshop uses **Bielik-Minitron-7B-v3.0-Instruct** served via vLLM.
 
 **Key parameters:**
 - Model: `speakleash/Bielik-Minitron-7B-v3.0-Instruct`
+- Primary language: **Polish** (all prompts are in Polish)
 - Chat format: ChatML (`<|im_start|>`, `<|im_end|>`)
-- Tool calling: Enabled via `bielik-tools` parser
 - Context window: 32,768 tokens
+- Agent pattern: ReAct (text-based tool calling, no native tool calling required)
 - Recommended temperature: 0.7
 - Recommended max_tokens: 2048 (per agent call)
 
@@ -112,7 +114,8 @@ See [docs/vllm-deployment.md](docs/vllm-deployment.md) for full deployment detai
 
 ## Tech Stack
 
-- [NVIDIA NeMo Agent Toolkit](https://github.com/NVIDIA/NeMo-Agent-Toolkit) - Agent orchestration
+- [NVIDIA NeMo Agent Toolkit](https://github.com/NVIDIA/NeMo-Agent-Toolkit) - Agent orchestration (`nvidia-nat`)
+- [NeMo Agent Toolkit Phoenix Plugin](https://pypi.org/project/nvidia-nat-phoenix/) - Native Phoenix tracing integration
 - [Bielik-Minitron-7B](https://huggingface.co/speakleash/Bielik-Minitron-7B-v3.0-Instruct) - Polish-optimized LLM
 - [vLLM](https://github.com/vllm-project/vllm) - High-performance inference server
 - [LangChain](https://github.com/langchain-ai/langchain) - Agent framework

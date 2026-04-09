@@ -106,7 +106,7 @@ Bielik acts as the orchestrator, choosing which sub-agent to invoke based on the
 ## CLI Commands You'll Use
 
 ```bash
-nat run --config_file config.yaml --input "query"    # Run a workflow
+nat run --config_file config.yaml --input "zapytanie"  # Run a workflow
 nat validate --config_file config.yaml                # Validate config
 nat serve --config_file config.yaml --port 8080       # Deploy as API
 nat info components                                   # List available components

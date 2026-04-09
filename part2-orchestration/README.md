@@ -15,7 +15,7 @@ In this part you will:
 ## Exercises
 
 ### Exercise 1: Basic Agent (15 min)
-`01_basic_agent/` - Create a simple ReAct agent that uses Bielik with basic tools (calculator, text search). Learn NAT's YAML configuration and `nat run` CLI.
+`01_basic_agent/` - Create a simple ReAct agent that uses Bielik with `wiki_search` and `current_datetime` tools. Learn NAT's YAML configuration and `nat run` CLI.
 
 ### Exercise 2: LangChain Agent (10 min)
 `02_langchain_agent/` - A pre-built LangChain ReAct research agent. Register it as a NAT Function so it can be composed with other agents.
@@ -32,3 +32,4 @@ In this part you will:
 - **YAML Workflow**: Declarative configuration that defines LLMs, functions, and how they connect
 - **`nat run`**: CLI command to execute a workflow from a config file
 - **`nat serve`**: Deploy a workflow as an API server
+- **ReAct**: Text-based reasoning + action loop - no native tool calling required
