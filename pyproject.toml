@@ -3,3 +3,10 @@ name = "bielik-nest-builders"
 version = "0.1.0"
 description = "Workshop: Multi-agent workflows with NeMo Agent Toolkit and Bielik"
 requires-python = ">=3.10"
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project.entry-points."nat.components"]
+workshop_agents = "workshop_agents.register"

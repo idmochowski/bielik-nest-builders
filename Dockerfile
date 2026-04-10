@@ -18,6 +18,9 @@ RUN uv pip install --system --prerelease=allow -r requirements.txt && \
 # Copy workshop content
 COPY . .
 
+# Install workshop package so custom NAT functions are registered via entry points
+RUN pip install --no-cache-dir -e .
+
 # Remove any local env files
 RUN rm -f .env
 
