@@ -2,9 +2,8 @@ FROM python:3.13-slim
 
 WORKDIR /workshop
 
-# System deps for jupyter and native packages
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    gcc g++ curl && \
+# curl for healthchecks
+RUN apt-get update && apt-get install -y --no-install-recommends curl && \
     rm -rf /var/lib/apt/lists/*
 
 # Install uv for fast dependency resolution
