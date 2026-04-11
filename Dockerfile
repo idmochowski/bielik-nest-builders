@@ -20,9 +20,6 @@ COPY . .
 # Install workshop package so custom NAT functions are registered via entry points
 RUN pip install --no-cache-dir -e .
 
-# Remove any local env files
-RUN rm -f .env
-
 # Jupyter on 8888
 EXPOSE 8888
 
