@@ -10,3 +10,4 @@ venv/
 bielik_output/
 .DS_Store
 .env.docker
+docs/part3-presenter-script.md
