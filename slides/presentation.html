@@ -1,0 +1,2031 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agent Architectures — Presentation</title>
+  <meta name="description" content="Praktyczny przewodnik po wzorcach budowania agentow AI">
+  <style>
+/* ═══════════════════════════════════════════════
+   Agent Architectures — Presentation Theme
+   Dark theme inspired by GitHub Dark + AI vibes
+   Enhanced with fragments, animations, speaker notes
+   ═══════════════════════════════════════════════ */
+
+:root {
+  /* Core palette */
+  --bg-primary: #0d1117;
+  --bg-secondary: #161b22;
+  --bg-tertiary: #21262d;
+  --bg-code: #0d1117;
+
+  /* Text */
+  --text-primary: #e6edf3;
+  --text-secondary: #8b949e;
+  --text-muted: #6e7681;
+
+  /* Accents */
+  --accent-blue: #58a6ff;
+  --accent-green: #7ee787;
+  --accent-orange: #f0883e;
+  --accent-red: #ff7b72;
+  --accent-purple: #d2a8ff;
+  --accent-cyan: #79c0ff;
+  --accent-yellow: #e3b341;
+
+  /* Borders */
+  --border-default: #30363d;
+  --border-muted: #21262d;
+
+  /* Sizing */
+  --slide-max-width: 960px;
+  --slide-padding: 60px;
+  --nav-height: 48px;
+
+  /* Transitions */
+  --transition-fast: 150ms ease;
+  --transition-slide: 400ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ─── Reset & Base ─────────────────────────── */
+
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans',
+    Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji';
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ─── Animated Background Grid ─────────────── */
+
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image:
+    radial-gradient(circle at 20% 50%, rgba(88, 166, 255, 0.03) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(210, 168, 255, 0.03) 0%, transparent 50%),
+    radial-gradient(circle at 50% 80%, rgba(126, 231, 135, 0.02) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ─── Progress Bar ─────────────────────────── */
+
+.progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple), var(--accent-blue));
+  background-size: 200% 100%;
+  animation: shimmer 3s ease-in-out infinite;
+  transition: width var(--transition-fast);
+  z-index: 100;
+  border-radius: 0 2px 2px 0;
+}
+
+@keyframes shimmer {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* ─── Fragment Progress Dots ───────────────── */
+
+.fragment-indicator {
+  position: fixed;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 6px;
+  z-index: 95;
+  padding: 6px 12px;
+  background: rgba(22, 27, 34, 0.8);
+  border-radius: 20px;
+  border: 1px solid var(--border-muted);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.fragment-indicator.visible {
+  opacity: 1;
+}
+
+.fragment-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--border-default);
+  transition: all 0.3s ease;
+}
+
+.fragment-dot.revealed {
+  background: var(--accent-blue);
+  box-shadow: 0 0 6px rgba(88, 166, 255, 0.5);
+}
+
+.fragment-dot.current {
+  background: var(--accent-purple);
+  box-shadow: 0 0 8px rgba(210, 168, 255, 0.6);
+  transform: scale(1.3);
+}
+
+/* ─── Navigation Bar ───────────────────────── */
+
+.nav-bar {
+  position: fixed;
+  top: 3px;
+  left: 0;
+  right: 0;
+  height: var(--nav-height);
+  background: rgba(22, 27, 34, 0.95);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border-default);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  z-index: 90;
+  user-select: none;
+}
+
+.nav-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.nav-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: 0.3px;
+}
+
+.nav-badge {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 12px;
+  background: var(--bg-tertiary);
+  color: var(--accent-blue);
+  border: 1px solid var(--border-default);
+  font-weight: 500;
+}
+
+.nav-center {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nav-btn {
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--border-default);
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  transition: all var(--transition-fast);
+}
+
+.nav-btn:hover {
+  background: var(--border-default);
+  color: var(--text-primary);
+}
+
+.nav-btn:active {
+  transform: scale(0.95);
+}
+
+.nav-counter {
+  font-size: 13px;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+  min-width: 60px;
+  text-align: center;
+}
+
+.nav-counter .current {
+  color: var(--accent-blue);
+  font-weight: 600;
+}
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.nav-shortcut {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.nav-shortcut kbd {
+  display: inline-block;
+  padding: 1px 6px;
+  border: 1px solid var(--border-default);
+  border-radius: 4px;
+  background: var(--bg-tertiary);
+  font-family: inherit;
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin: 0 2px;
+}
+
+/* ─── Slide Container ──────────────────────── */
+
+.slide-viewport {
+  position: fixed;
+  top: calc(3px + var(--nav-height));
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+}
+
+.slide-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity var(--transition-slide), transform var(--transition-slide);
+  padding: var(--slide-padding);
+  overflow-y: auto;
+}
+
+.slide-container.loading {
+  opacity: 0;
+  transform: translateX(40px);
+}
+
+.slide-container.exit-left {
+  opacity: 0;
+  transform: translateX(-40px);
+}
+
+.slide-content {
+  max-width: var(--slide-max-width);
+  width: 100%;
+  position: relative;
+  z-index: 1;
+}
+
+/* ─── Fragment System ──────────────────────── */
+
+.fragment {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+}
+
+.fragment.revealed {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* Staggered delays for sequential reveals */
+.fragment.revealed:nth-of-type(1) { transition-delay: 0ms; }
+.fragment.revealed:nth-of-type(2) { transition-delay: 80ms; }
+.fragment.revealed:nth-of-type(3) { transition-delay: 160ms; }
+.fragment.revealed:nth-of-type(4) { transition-delay: 240ms; }
+.fragment.revealed:nth-of-type(5) { transition-delay: 320ms; }
+.fragment.revealed:nth-of-type(6) { transition-delay: 400ms; }
+
+/* Fragment variants */
+.fragment.fade-left {
+  transform: translateX(-24px);
+}
+.fragment.fade-left.revealed {
+  transform: translateX(0);
+}
+
+.fragment.fade-right {
+  transform: translateX(24px);
+}
+.fragment.fade-right.revealed {
+  transform: translateX(0);
+}
+
+.fragment.scale-in {
+  transform: scale(0.9);
+}
+.fragment.scale-in.revealed {
+  transform: scale(1);
+}
+
+.fragment.highlight-on-reveal.revealed {
+  animation: highlightPulse 1s ease;
+}
+
+@keyframes highlightPulse {
+  0% { box-shadow: 0 0 0 0 rgba(88, 166, 255, 0.4); }
+  50% { box-shadow: 0 0 20px 4px rgba(88, 166, 255, 0.2); }
+  100% { box-shadow: none; }
+}
+
+/* ─── Slide Typography ─────────────────────── */
+
+.slide-content h1 {
+  font-size: 48px;
+  font-weight: 700;
+  line-height: 1.15;
+  margin-bottom: 20px;
+  letter-spacing: -0.5px;
+}
+
+.slide-content h2 {
+  font-size: 36px;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 16px;
+  color: var(--accent-blue);
+}
+
+.slide-content h3 {
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1.3;
+  margin-bottom: 12px;
+  color: var(--accent-cyan);
+}
+
+.slide-content p {
+  font-size: 18px;
+  line-height: 1.65;
+  color: var(--text-secondary);
+  margin-bottom: 16px;
+}
+
+.slide-content ul, .slide-content ol {
+  font-size: 17px;
+  line-height: 1.7;
+  color: var(--text-secondary);
+  margin-bottom: 16px;
+  padding-left: 24px;
+}
+
+.slide-content li {
+  margin-bottom: 6px;
+}
+
+.slide-content strong {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.slide-content em {
+  color: var(--accent-purple);
+  font-style: italic;
+}
+
+/* ─── Gradient Text Effect ─────────────────── */
+
+.gradient-text {
+  background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple), var(--accent-cyan));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ─── Code & Diagrams ──────────────────────── */
+
+pre.diagram {
+  background: var(--bg-code);
+  border: 1px solid var(--border-default);
+  border-radius: 8px;
+  padding: 20px 24px;
+  font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--text-primary);
+  overflow-x: auto;
+  margin-bottom: 20px;
+  white-space: pre;
+  position: relative;
+}
+
+pre.diagram::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
+  border-radius: 8px 8px 0 0;
+}
+
+pre.config {
+  background: var(--bg-code);
+  border: 1px solid #1a3a2a;
+  border-radius: 8px;
+  padding: 16px 20px;
+  font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--accent-green);
+  overflow-x: auto;
+  margin-bottom: 20px;
+  white-space: pre;
+  position: relative;
+}
+
+pre.config::before {
+  content: 'NAT Config';
+  position: absolute;
+  top: -1px;
+  right: 12px;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--accent-green);
+  background: var(--bg-code);
+  padding: 2px 8px;
+  border: 1px solid #1a3a2a;
+  border-top: none;
+  border-radius: 0 0 4px 4px;
+}
+
+/* ─── Animated diagram lines ───────────────── */
+
+.diagram-animated {
+  position: relative;
+}
+
+.diagram-animated .diagram-line {
+  opacity: 0;
+  animation: diagramLineIn 0.4s ease forwards;
+}
+
+@keyframes diagramLineIn {
+  from { opacity: 0; transform: translateX(-8px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+/* ─── Callout Boxes ─────────────────────────── */
+
+.callout {
+  border-radius: 8px;
+  padding: 16px 20px;
+  margin-bottom: 20px;
+  border-left: 4px solid;
+  position: relative;
+  overflow: hidden;
+}
+
+.callout::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.02));
+  pointer-events: none;
+}
+
+.callout-info {
+  background: rgba(88, 166, 255, 0.08);
+  border-color: var(--accent-blue);
+}
+
+.callout-info p {
+  color: var(--accent-blue);
+}
+
+.callout-tip {
+  background: rgba(126, 231, 135, 0.08);
+  border-color: var(--accent-green);
+}
+
+.callout-tip p {
+  color: var(--accent-green);
+}
+
+.callout-warning {
+  background: rgba(240, 136, 62, 0.08);
+  border-color: var(--accent-orange);
+}
+
+.callout-warning p {
+  color: var(--accent-orange);
+}
+
+/* Pulsing callout for "we use this!" highlights */
+.callout-pulse {
+  animation: calloutPulse 2s ease-in-out infinite;
+}
+
+@keyframes calloutPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(126, 231, 135, 0.2); }
+  50% { box-shadow: 0 0 16px 2px rgba(126, 231, 135, 0.15); }
+}
+
+/* ─── Two-Column Layout ────────────────────── */
+
+.two-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 20px;
+}
+
+.column h4 {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.column.strengths h4 {
+  color: var(--accent-green);
+}
+
+.column.weaknesses h4 {
+  color: var(--accent-orange);
+}
+
+.column ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+.column li {
+  padding-left: 20px;
+  position: relative;
+  font-size: 15px;
+}
+
+.column.strengths li::before {
+  content: '\2713';
+  position: absolute;
+  left: 0;
+  color: var(--accent-green);
+  font-weight: 700;
+}
+
+.column.weaknesses li::before {
+  content: '\2717';
+  position: absolute;
+  left: 0;
+  color: var(--accent-orange);
+  font-weight: 700;
+}
+
+/* ─── Steps / Numbered Flow ────────────────── */
+
+.steps {
+  counter-reset: step;
+  list-style: none;
+  padding-left: 0;
+  margin-bottom: 20px;
+}
+
+.steps li {
+  counter-increment: step;
+  padding: 10px 16px 10px 48px;
+  position: relative;
+  margin-bottom: 6px;
+  background: var(--bg-secondary);
+  border-radius: 6px;
+  border: 1px solid var(--border-muted);
+  font-size: 15px;
+  color: var(--text-secondary);
+}
+
+.steps li::before {
+  content: counter(step);
+  position: absolute;
+  left: 14px;
+  top: 10px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--accent-blue);
+  color: var(--bg-primary);
+  font-size: 13px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ─── Comparison Table ─────────────────────── */
+
+.comparison-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 14px;
+  margin-bottom: 20px;
+  border: 1px solid var(--border-default);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.comparison-table th {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  font-weight: 600;
+  padding: 12px 16px;
+  text-align: left;
+  border-bottom: 1px solid var(--border-default);
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.comparison-table td {
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border-muted);
+  color: var(--text-secondary);
+  transition: all 0.2s ease;
+}
+
+.comparison-table tr:last-child td {
+  border-bottom: none;
+}
+
+.comparison-table tr:hover td {
+  background: rgba(88, 166, 255, 0.06);
+}
+
+.comparison-table td:first-child {
+  font-weight: 600;
+  color: var(--accent-blue);
+}
+
+/* Color-coded cells */
+.rating-low { color: var(--accent-green) !important; font-weight: 600; }
+.rating-medium { color: var(--accent-orange) !important; }
+.rating-high { color: var(--accent-red) !important; font-weight: 600; }
+.rating-very-high { color: var(--accent-red) !important; font-weight: 700; }
+
+/* Row animation */
+.comparison-table tr {
+  transition: all 0.3s ease;
+}
+
+.comparison-table tr.row-reveal {
+  opacity: 0;
+  transform: translateX(-12px);
+}
+
+.comparison-table tr.row-revealed {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* ─── Title Slide Specific ─────────────────── */
+
+.title-slide {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 80vh;
+}
+
+.title-slide h1 {
+  font-size: 56px;
+  background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 16px;
+}
+
+.title-slide .subtitle {
+  font-size: 22px;
+  color: var(--text-secondary);
+  margin-bottom: 40px;
+  max-width: 600px;
+}
+
+.title-slide .meta {
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.title-slide .meta span {
+  margin: 0 12px;
+}
+
+/* Animated dots background for title */
+.title-dots {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.title-dot {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--accent-blue);
+  opacity: 0.15;
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0) scale(1); opacity: 0.15; }
+  50% { transform: translateY(-20px) scale(1.5); opacity: 0.3; }
+}
+
+/* Typing effect for subtitle */
+.typing-cursor::after {
+  content: '|';
+  animation: blink 1s step-end infinite;
+  color: var(--accent-blue);
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* ─── Spectrum / Timeline ──────────────────── */
+
+.spectrum {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin: 30px 0;
+  position: relative;
+  padding: 20px 0;
+}
+
+.spectrum-item {
+  flex: 1;
+  text-align: center;
+  padding: 14px 8px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-default);
+  position: relative;
+  font-size: 13px;
+  color: var(--text-secondary);
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.spectrum-item:first-child {
+  border-radius: 8px 0 0 8px;
+}
+
+.spectrum-item:last-child {
+  border-radius: 0 8px 8px 0;
+}
+
+.spectrum-item + .spectrum-item {
+  border-left: none;
+}
+
+.spectrum-item:hover {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  z-index: 1;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.spectrum-item .name {
+  font-weight: 600;
+  color: var(--accent-blue);
+  display: block;
+  margin-bottom: 4px;
+  font-size: 14px;
+}
+
+.spectrum-item .detail {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.spectrum-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 8px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* ─── Multi-agent sub-patterns grid ────────── */
+
+.patterns-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.pattern-card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-default);
+  border-radius: 8px;
+  padding: 16px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.pattern-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--accent-blue), transparent);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.pattern-card:hover {
+  border-color: var(--accent-blue);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.pattern-card:hover::before {
+  opacity: 1;
+}
+
+.pattern-card h4 {
+  font-size: 16px;
+  color: var(--accent-blue);
+  margin-bottom: 8px;
+}
+
+.pattern-card pre.diagram {
+  font-size: 11px;
+  padding: 12px;
+  margin-bottom: 8px;
+}
+
+.pattern-card p {
+  font-size: 13px;
+  margin-bottom: 0;
+}
+
+/* ─── Takeaway Cards ───────────────────────── */
+
+.takeaway-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.takeaway-card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-default);
+  border-radius: 8px;
+  padding: 16px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  transition: all 0.3s ease;
+}
+
+.takeaway-card:hover {
+  border-color: var(--accent-blue);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.takeaway-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: var(--bg-tertiary);
+}
+
+.takeaway-card h4 {
+  font-size: 14px;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.takeaway-card p {
+  font-size: 13px;
+  margin: 0;
+  color: var(--text-muted);
+}
+
+/* ─── Workshop badge ───────────────────────── */
+
+.workshop-badge {
+  display: inline-block;
+  padding: 8px 16px;
+  border-radius: 8px;
+  background: rgba(126, 231, 135, 0.1);
+  border: 1px solid rgba(126, 231, 135, 0.3);
+  color: var(--accent-green);
+  font-size: 14px;
+  font-weight: 600;
+  margin-top: 8px;
+}
+
+/* ─── Overview Slide ───────────────────────── */
+
+.overview-question {
+  font-size: 28px;
+  color: var(--accent-purple);
+  font-weight: 700;
+  margin-bottom: 24px;
+  line-height: 1.3;
+}
+
+.definition-box {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-default);
+  border-radius: 8px;
+  padding: 20px 24px;
+  margin-bottom: 24px;
+  position: relative;
+}
+
+.definition-box::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 3px;
+  background: linear-gradient(180deg, var(--accent-purple), var(--accent-blue));
+  border-radius: 8px 0 0 8px;
+}
+
+.definition-box p {
+  font-size: 18px;
+  margin: 0;
+  color: var(--text-primary);
+}
+
+/* ─── Slide number badge ───────────────────── */
+
+.slide-number-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+  color: white;
+  font-weight: 700;
+  font-size: 18px;
+  margin-bottom: 16px;
+  box-shadow: 0 0 16px rgba(88, 166, 255, 0.2);
+}
+
+/* ─── Counter Badge ────────────────────────── */
+
+.counter-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  margin-left: 12px;
+}
+
+.counter-badge.green {
+  background: rgba(126, 231, 135, 0.1);
+  border: 1px solid rgba(126, 231, 135, 0.3);
+  color: var(--accent-green);
+}
+
+.counter-badge.orange {
+  background: rgba(240, 136, 62, 0.1);
+  border: 1px solid rgba(240, 136, 62, 0.3);
+  color: var(--accent-orange);
+}
+
+.counter-badge.blue {
+  background: rgba(88, 166, 255, 0.1);
+  border: 1px solid rgba(88, 166, 255, 0.3);
+  color: var(--accent-blue);
+}
+
+/* ─── Speaker Notes Panel ──────────────────── */
+
+.speaker-notes {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(22, 27, 34, 0.98);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid var(--border-default);
+  padding: 16px 24px;
+  z-index: 95;
+  transform: translateY(100%);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  max-height: 30vh;
+  overflow-y: auto;
+}
+
+.speaker-notes.visible {
+  transform: translateY(0);
+}
+
+.speaker-notes-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.speaker-notes-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--accent-purple);
+  font-weight: 600;
+}
+
+.speaker-notes-time {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.speaker-notes p {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  margin-bottom: 0;
+}
+
+.speaker-notes ul {
+  font-size: 13px;
+  color: var(--text-secondary);
+  padding-left: 20px;
+  margin-top: 8px;
+}
+
+.speaker-notes li {
+  margin-bottom: 4px;
+}
+
+/* ─── Go-to slide overlay ──────────────────── */
+
+.goto-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(13, 17, 23, 0.85);
+  backdrop-filter: blur(4px);
+  z-index: 200;
+  align-items: center;
+  justify-content: center;
+}
+
+.goto-overlay.active {
+  display: flex;
+}
+
+.goto-box {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-default);
+  border-radius: 12px;
+  padding: 32px;
+  text-align: center;
+  min-width: 320px;
+}
+
+.goto-box h3 {
+  color: var(--text-primary);
+  font-size: 18px;
+  margin-bottom: 16px;
+}
+
+.goto-input {
+  width: 100%;
+  padding: 12px 16px;
+  font-size: 24px;
+  text-align: center;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-default);
+  border-radius: 8px;
+  color: var(--text-primary);
+  outline: none;
+  font-variant-numeric: tabular-nums;
+}
+
+.goto-input:focus {
+  border-color: var(--accent-blue);
+}
+
+/* ─── Overview grid ────────────────────────── */
+
+.overview-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(13, 17, 23, 0.95);
+  backdrop-filter: blur(4px);
+  z-index: 200;
+  overflow-y: auto;
+  padding: 60px 40px;
+}
+
+.overview-overlay.active {
+  display: block;
+}
+
+.overview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.overview-card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-default);
+  border-radius: 8px;
+  padding: 20px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.overview-card:hover {
+  border-color: var(--accent-blue);
+  background: var(--bg-tertiary);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.overview-card .card-num {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+
+.overview-card .card-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* ─── Slide Entrance Animations ────────────── */
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.slide-content > *:not(.fragment):not(.title-dots) {
+  animation: fadeInUp 0.5s ease both;
+}
+
+.slide-content > *:not(.fragment):not(.title-dots):nth-child(1) { animation-delay: 0.05s; }
+.slide-content > *:not(.fragment):not(.title-dots):nth-child(2) { animation-delay: 0.12s; }
+.slide-content > *:not(.fragment):not(.title-dots):nth-child(3) { animation-delay: 0.19s; }
+.slide-content > *:not(.fragment):not(.title-dots):nth-child(4) { animation-delay: 0.26s; }
+.slide-content > *:not(.fragment):not(.title-dots):nth-child(5) { animation-delay: 0.33s; }
+.slide-content > *:not(.fragment):not(.title-dots):nth-child(6) { animation-delay: 0.40s; }
+.slide-content > *:not(.fragment):not(.title-dots):nth-child(7) { animation-delay: 0.47s; }
+.slide-content > *:not(.fragment):not(.title-dots):nth-child(8) { animation-delay: 0.54s; }
+
+/* ─── Quality Meter (for Reflexion slide) ──── */
+
+.quality-meter {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 12px 0;
+}
+
+.quality-bar {
+  flex: 1;
+  height: 8px;
+  background: var(--bg-tertiary);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.quality-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  background: linear-gradient(90deg, var(--accent-red), var(--accent-orange), var(--accent-green));
+}
+
+.quality-label {
+  font-size: 12px;
+  color: var(--text-muted);
+  min-width: 60px;
+  text-align: right;
+}
+
+/* ─── Exercise Badge ───────────────────────── */
+
+.exercise-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  background: rgba(88, 166, 255, 0.1);
+  border: 1px solid rgba(88, 166, 255, 0.3);
+  color: var(--accent-blue);
+  margin-bottom: 12px;
+}
+
+/* ─── Arrow Flow ───────────────────────────── */
+
+.flow-arrow {
+  display: flex;
+  justify-content: center;
+  padding: 4px 0;
+  color: var(--accent-blue);
+  font-size: 20px;
+  animation: arrowPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes arrowPulse {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
+/* ─── Responsive ───────────────────────────── */
+
+@media (max-width: 768px) {
+  :root {
+    --slide-padding: 24px;
+  }
+
+  .slide-content h1 { font-size: 32px; }
+  .slide-content h2 { font-size: 24px; }
+  .slide-content h3 { font-size: 18px; }
+  .slide-content p { font-size: 15px; }
+
+  .two-columns {
+    grid-template-columns: 1fr;
+  }
+
+  .patterns-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .takeaway-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .spectrum {
+    flex-wrap: wrap;
+  }
+
+  .spectrum-item {
+    flex: none;
+    width: calc(50% - 4px);
+    border-radius: 6px !important;
+    margin-bottom: 6px;
+  }
+
+  .title-slide h1 { font-size: 36px; }
+  .title-slide .subtitle { font-size: 17px; }
+
+  .nav-shortcut { display: none; }
+
+  pre.diagram, pre.config {
+    font-size: 11px;
+    padding: 12px 16px;
+  }
+
+  .comparison-table {
+    font-size: 12px;
+  }
+
+  .comparison-table th, .comparison-table td {
+    padding: 8px 10px;
+  }
+
+  .speaker-notes {
+    max-height: 25vh;
+  }
+
+  .fragment-indicator {
+    bottom: 8px;
+  }
+}
+
+  </style>
+</head>
+<body>
+
+  <!-- Embedded slide data (for file:// protocol support) -->
+  <script type="application/json" id="embedded-slides-data">
+{"slide-00-title.html": "<div class=\"slide-content title-slide\">\n  <!-- Animated background dots -->\n  <div class=\"title-dots\">\n    <div class=\"title-dot\" style=\"top:10%;left:15%;animation-delay:0s\"></div>\n    <div class=\"title-dot\" style=\"top:20%;left:75%;animation-delay:1s\"></div>\n    <div class=\"title-dot\" style=\"top:40%;left:25%;animation-delay:2s\"></div>\n    <div class=\"title-dot\" style=\"top:55%;left:85%;animation-delay:0.5s\"></div>\n    <div class=\"title-dot\" style=\"top:70%;left:45%;animation-delay:1.5s\"></div>\n    <div class=\"title-dot\" style=\"top:85%;left:10%;animation-delay:3s\"></div>\n    <div class=\"title-dot\" style=\"top:30%;left:60%;animation-delay:2.5s\"></div>\n    <div class=\"title-dot\" style=\"top:75%;left:70%;animation-delay:0.8s\"></div>\n    <div class=\"title-dot\" style=\"top:15%;left:40%;animation-delay:1.8s;background:var(--accent-purple)\"></div>\n    <div class=\"title-dot\" style=\"top:60%;left:50%;animation-delay:3.5s;background:var(--accent-cyan)\"></div>\n    <div class=\"title-dot\" style=\"top:45%;left:90%;animation-delay:2.2s\"></div>\n    <div class=\"title-dot\" style=\"top:90%;left:30%;animation-delay:1.2s;background:var(--accent-green)\"></div>\n  </div>\n\n  <h1>Architektury<br>Agent&oacute;w AI</h1>\n  <p class=\"subtitle\">Praktyczny przewodnik po wzorcach budowania<br>agent&oacute;w opartych na duzych modelach jezykowych</p>\n  <p class=\"meta\">\n    <span>Bielik Nest Builders</span>\n    <span>&middot;</span>\n    <span>NVIDIA NeMo Agent Toolkit</span>\n    <span>&middot;</span>\n    <span>Bielik-Minitron-7B</span>\n  </p>\n\n  <div style=\"margin-top:32px;opacity:0.5;font-size:13px;color:var(--text-muted);\">\n    &larr; &rarr; navigate &nbsp;&middot;&nbsp; F fullscreen &nbsp;&middot;&nbsp; O overview &nbsp;&middot;&nbsp; S speaker notes\n  </div>\n</div>\n", "slide-01-overview.html": "<div class=\"slide-content\">\n  <p class=\"overview-question\">Co to jest architektura agenta?</p>\n\n  <div class=\"definition-box fragment\">\n    <p><strong>Architektura agenta</strong> to wzorzec organizacji interakcji miedzy modelem jezykowym (LLM) a narzedziami &mdash; okresla, <em>kiedy</em> model mysli, <em>kiedy</em> dziala i <em>jak</em> laczy wyniki w ostateczna odpowiedz.</p>\n  </div>\n\n  <h3 class=\"fragment\">Spektrum zlozonosci</h3>\n  <div class=\"spectrum fragment\">\n    <div class=\"spectrum-item\" data-slide=\"3\">\n      <span class=\"name\">Tool Calling</span>\n      <span class=\"detail\">1 krok</span>\n    </div>\n    <div class=\"spectrum-item\" data-slide=\"2\">\n      <span class=\"name\">ReAct</span>\n      <span class=\"detail\">N krok&oacute;w</span>\n    </div>\n    <div class=\"spectrum-item\" data-slide=\"4\">\n      <span class=\"name\">ReWOO</span>\n      <span class=\"detail\">Plan + Solve</span>\n    </div>\n    <div class=\"spectrum-item\" data-slide=\"5\">\n      <span class=\"name\">Plan &amp; Execute</span>\n      <span class=\"detail\">Dekompozycja</span>\n    </div>\n    <div class=\"spectrum-item\" data-slide=\"6\">\n      <span class=\"name\">Reflexion</span>\n      <span class=\"detail\">Samokrytyka</span>\n    </div>\n    <div class=\"spectrum-item\" data-slide=\"7\">\n      <span class=\"name\">LATS</span>\n      <span class=\"detail\">Drzewo</span>\n    </div>\n    <div class=\"spectrum-item\" data-slide=\"8\">\n      <span class=\"name\">Multi-Agent</span>\n      <span class=\"detail\">Orkiestracja</span>\n    </div>\n  </div>\n  <div class=\"spectrum-label fragment\">\n    <span>Prostsze &bull; Szybsze &bull; Tansze</span>\n    <span>Bardziej zlozone &bull; Elastyczne &bull; Kosztowne</span>\n  </div>\n\n  <div class=\"callout callout-info fragment\">\n    <p>Dzisiaj om&oacute;wimy kazda z tych architektur &mdash; od najprostszej po najbardziej zaawansowana. <strong>Kliknij na element spectrum</strong> aby przeskoczyc do odpowiedniego slidu.</p>\n  </div>\n</div>\n", "slide-02-react.html": "<div class=\"slide-content\">\n  <div class=\"slide-number-badge\">1</div>\n  <h2>ReAct <span class=\"gradient-text\">(Reasoning + Acting)</span></h2>\n  <p>Agent przeplata <strong>myslenie</strong> i <strong>dzialanie</strong> w petli. Kazdy krok: model rozumuje, wykonuje akcje, obserwuje wynik, i rozumuje ponownie.</p>\n\n  <pre class=\"diagram fragment\">User: \"Kim byl Mikolaj Kopernik?\"\n\n&#9484;&#9472;&#9472; LLM &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9488;\n&#9474; Thought: I need to search Wikipedia for Copernicus  &#9474;\n&#9474; Action: wiki_search(\"Mikolaj Kopernik\")             &#9474;\n&#9492;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9496;\n                      &#9474;\n                      &#9660;\n              &#9484;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9488;\n              &#9474; Tool: search &#9474; &#9472;&#9472;&#8594; returns Wikipedia article\n              &#9492;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9496;</pre>\n\n  <pre class=\"diagram fragment\">&#9484;&#9472;&#9472; LLM &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9488;\n&#9474; Observation: [Wikipedia content about Copernicus]   &#9474;\n&#9474; Thought: I now have enough information              &#9474;\n&#9474; Final Answer: Mikolaj Kopernik byl...               &#9474;\n&#9492;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9496;</pre>\n\n  <div class=\"two-columns fragment\">\n    <div class=\"column strengths\">\n      <h4>Zalety</h4>\n      <ul>\n        <li>Transparentny &mdash; kazdy krok rozumowania widoczny</li>\n        <li>Elastyczny &mdash; model adaptuje plan do wynik&oacute;w</li>\n        <li>Dziala z modelami tekstowymi (jak Bielik 7B)</li>\n      </ul>\n    </div>\n    <div class=\"column weaknesses\">\n      <h4>Wady</h4>\n      <ul>\n        <li>Token-heavy &mdash; pelna historia w kazdym zapytaniu</li>\n        <li>Moze zapetlic sie bez Final Answer</li>\n        <li>Sekwencyjny &mdash; narzedzia jedno po drugim</li>\n      </ul>\n    </div>\n  </div>\n\n  <pre class=\"config fragment\">workflow:\n  _type: react_agent\n  tool_names: [wiki_search, current_datetime]\n  llm_name: bielik\n  max_tool_calls: 5</pre>\n\n  <div class=\"callout callout-tip callout-pulse fragment\">\n    <p><strong>Uzywamy w tym warsztacie!</strong> ReAct dziala niezawodnie z Bielik-Minitron-7B bez natywnego wsparcia tool calling. Cwiczenia 1&ndash;4 w Part 2.</p>\n  </div>\n</div>\n", "slide-03-tool-calling.html": "<div class=\"slide-content\">\n  <div class=\"slide-number-badge\">2</div>\n  <h2>Tool Calling Agent <span class=\"counter-badge green\">vs ReAct</span></h2>\n  <p>Model uzywa <strong>natywnego API</strong> do wywolywania funkcji &mdash; strukturalne JSON zamiast parsowania tekstu.</p>\n\n  <pre class=\"diagram fragment\">User: \"Jaka jest pogoda w Warszawie?\"\n\n&#9484;&#9472;&#9472; LLM &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9488;\n&#9474; Returns structured tool_call:                       &#9474;\n&#9474;   {\"name\": \"get_weather\", \"args\": {\"city\": \"Warszawa\"}} &#9474;\n&#9492;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9496;\n                      &#9474;\n                      &#9660;\n              &#9484;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9488;\n              &#9474; Tool: weather&#9474; &#9472;&#9472;&#8594; {\"temp\": 12, \"conditions\": \"s&#322;onecznie\"}\n              &#9492;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9496;</pre>\n\n  <pre class=\"diagram fragment\">&#9484;&#9472;&#9472; LLM &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9488;\n&#9474; Final Answer: W Warszawie jest 12&#176;C, s&#322;onecznie.    &#9474;\n&#9492;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9496;</pre>\n\n  <div class=\"two-columns fragment\">\n    <div class=\"column strengths\">\n      <h4>Zalety</h4>\n      <ul>\n        <li>Bardziej niezawodny &mdash; brak parsowania tekstu</li>\n        <li>Szybszy &mdash; brak narzutu promptu ReAct</li>\n        <li>R&oacute;wnolegle wywolania narzedzi</li>\n      </ul>\n    </div>\n    <div class=\"column weaknesses\">\n      <h4>Wady</h4>\n      <ul>\n        <li>Wymaga wsparcia modelu + serwera (vLLM)</li>\n        <li>Mniej transparentny &mdash; rozumowanie ukryte</li>\n        <li>Mniejsze modele moga miec trudnosci</li>\n      </ul>\n    </div>\n  </div>\n\n  <pre class=\"config fragment\">workflow:\n  _type: tool_calling_agent\n  tool_names: [wiki_search, current_datetime]\n  llm_name: bielik</pre>\n\n  <div class=\"callout callout-warning fragment\">\n    <p>Wymaga vLLM skonfigurowanego z <code>--enable-auto-tool-choice</code> i customowym parserem narzedzi.</p>\n  </div>\n</div>\n", "slide-04-rewod.html": "<div class=\"slide-content\">\n  <div class=\"slide-number-badge\">3</div>\n  <h2>ReWOO <span class=\"counter-badge green\">2&ndash;3 LLM calls</span></h2>\n  <p><strong>Reasoning WithOut Observation</strong> &mdash; model tworzy <strong>kompletny plan z gory</strong> przed wykonaniem jakiegokolwiek narzedzia. Potem narzedzia dzialaja <em>r&oacute;wnolegle</em>, a solver laczy wyniki.</p>\n\n  <h3>Faza 1: Planner</h3>\n  <pre class=\"diagram fragment\">User: \"Por&oacute;wnaj Python i Rust pod k&#261;tem wydajnosci.\"\n\n&#9484;&#9472;&#9472; Planner (LLM) &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9488;\n&#9474; Plan:                                               &#9474;\n&#9474;   Step 1: search(\"Python programming performance\")  &#9474;\n&#9474;   Step 2: search(\"Rust programming performance\")    &#9474;\n&#9474;   Step 3: Combine and compare results               &#9474;\n&#9492;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9496;</pre>\n\n  <h3 class=\"fragment\">Faza 2: Worker (r&oacute;wnolegle!)</h3>\n  <pre class=\"diagram fragment\">          &#9484;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9496;\n          &#9474;               &#9474;\n  &#9484;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9488;      &#9484;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9488;\n  &#9474; Tool: search &#9474;      &#9474; Tool: search &#9474;   &#8592; R&oacute;wnolegle!\n  &#9474; \"Python...\"  &#9474;      &#9474; \"Rust...\"    &#9474;\n  &#9492;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9496;      &#9492;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9496;</pre>\n\n  <h3 class=\"fragment\">Faza 3: Solver</h3>\n  <pre class=\"diagram fragment\">&#9484;&#9472;&#9472; Solver (LLM) &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9488;\n&#9474; Combines all observations into the final answer     &#9474;\n&#9492;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9496;</pre>\n\n  <div class=\"two-columns fragment\">\n    <div class=\"column strengths\">\n      <h4>Zalety</h4>\n      <ul>\n        <li>Mniej wywolan LLM &mdash; tylko 2-3 (planner + solver)</li>\n        <li>R&oacute;wnoleglosc &mdash; narzedzia dzialaja jednoczesnie</li>\n        <li>Nizszy koszt &mdash; mniej token&oacute;w</li>\n      </ul>\n    </div>\n    <div class=\"column weaknesses\">\n      <h4>Wady</h4>\n      <ul>\n        <li>Brak adaptacji &mdash; plan jest stay</li>\n        <li>Jakosc planu = jakosc wyniku</li>\n        <li>Wymaga modelu z planowaniem wieloetapowym</li>\n      </ul>\n    </div>\n  </div>\n\n  <div class=\"callout callout-info fragment\">\n    <p>Najlepszy gdy kroki sa <strong>przewidywalne i niezalezne</strong>: &ldquo;por&oacute;wnaj X i Y&rdquo;, &ldquo;zbierz dane o A, B, C&rdquo;. Nie nadaje sie do zadan eksploracyjnych.</p>\n  </div>\n</div>\n", "slide-05-plan-execute.html": "<div class=\"slide-content\">\n  <div class=\"slide-number-badge\">4</div>\n  <h2>Plan-and-Execute <span class=\"counter-badge orange\">2N LLM calls</span></h2>\n  <p>Dwie fazy: <strong>planer</strong> (LLM) dekomponuje zadanie na kroki, <strong>executor</strong> wykonuje kazdy krok sekwencyjalnie. Planer moze poprawiac plan po kazdym kroku.</p>\n\n  <div class=\"exercise-badge fragment\">&#9654; Cwiczenie 4 (unified workflow)</div>\n\n  <h3 class=\"fragment\">Planner dekomponuje zadanie</h3>\n  <pre class=\"diagram fragment\">User: \"Napisz raport o stanie AI w Polsce.\"\n\n&#9484;&#9472;&#9472; Planner (LLM) &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9488;\n&#9474; Step 1: Research AI companies in Poland              &#9474;\n&#9474; Step 2: Research AI education in Poland              &#9474;\n&#9474; Step 3: Research government AI initiatives           &#9474;\n&#9474; Step 4: Write report combining all findings          &#9474;\n&#9492;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9496;</pre>\n\n  <h3 class=\"fragment\">Executor realizuje plan krok po kroku</h3>\n  <pre class=\"diagram fragment\">&#9484;&#9472;&#9472; Executor &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9488;\n&#9474; Executes Step 1 &#8594; result1                           &#9474;\n&#9474; Executes Step 2 &#8594; result2                           &#9474;\n&#9474; Executes Step 3 &#8594; result3                           &#9474;\n&#9474; Executes Step 4 (using result1+2+3) &#8594; final report  &#9474;\n&#9492;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9496;</pre>\n\n  <div class=\"two-columns fragment\">\n    <div class=\"column strengths\">\n      <h4>Zalety</h4>\n      <ul>\n        <li>Obsluguje zlozone, wieloetapowe zadania</li>\n        <li>Planer adaptuje plan do wynik&oacute;w</li>\n        <li>Jasny podzial r&oacute;l: planowanie vs. wykonanie</li>\n      </ul>\n    </div>\n    <div class=\"column weaknesses\">\n      <h4>Wady</h4>\n      <ul>\n        <li>Wyzsze op&oacute;znienie &mdash; 2 LLM per cykl</li>\n        <li>Przerost dla prostych zadan</li>\n        <li>Bledy planowania kumuluja sie</li>\n      </ul>\n    </div>\n  </div>\n\n  <div class=\"callout callout-tip fragment\">\n    <p><strong>Cwiczenie 4</strong> uzywa tego wzorca &mdash; ReAct orchestrator decyduje kiedy wywolac agenta badawczego, a kiedy crew pisarski.</p>\n  </div>\n</div>\n", "slide-06-reflexion.html": "<div class=\"slide-content\">\n  <div class=\"slide-number-badge\">5</div>\n  <h2>Reflexion <span class=\"counter-badge orange\">2&#215; iterations</span></h2>\n  <p>Agent dziala, potem <strong>sam ocenia swoj wynik</strong>, i poprawia go. Wielokrotne rundy samokrytyki podnosza jakosc.</p>\n\n  <div class=\"quality-meter fragment\" data-quality-meter=\"35\">\n    <span class=\"quality-label\">0%</span>\n    <div class=\"quality-bar\">\n      <div class=\"quality-fill\" style=\"width: 0%\"></div>\n    </div>\n    <span class=\"quality-label\">100%</span>\n  </div>\n\n  <h3 class=\"fragment\">Runda 1: Generowanie</h3>\n  <pre class=\"diagram fragment\">&#9484;&#9472;&#9472; Agent (LLM) &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9488;\n&#9474; Generate initial answer              &#9474;\n&#9492;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9496;</pre>\n\n  <div class=\"callout callout-warning fragment\" data-quality-meter=\"60\">\n    <p><strong>Evaluator:</strong> &ldquo;Odpowiedz zbyt techniczna. Brak analogii z zycia codziennego.&rdquo;</p>\n  </div>\n\n  <h3 class=\"fragment\">Runda 2: Poprawa</h3>\n  <pre class=\"diagram fragment\">&#9484;&#9472;&#9472; Agent (LLM) &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9488;\n&#9474; Revised answer with analogies        &#9474;\n&#9492;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9496;</pre>\n\n  <div class=\"callout callout-tip fragment\" data-quality-meter=\"90\">\n    <p><strong>Evaluator:</strong> &ldquo;Dobrze. Jasne i przystepne.&rdquo;</p>\n  </div>\n\n  <div class=\"two-columns fragment\">\n    <div class=\"column strengths\">\n      <h4>Zalety</h4>\n      <ul>\n        <li>Wyzsza jakosc &mdash; iteracyjne poprawki</li>\n        <li>Samonaprawiajacy &mdash; lapie halucynacje</li>\n        <li>Dziala z dowolnym modelem bazowym</li>\n      </ul>\n    </div>\n    <div class=\"column weaknesses\">\n      <h4>Wady</h4>\n      <ul>\n        <li>Drogi &mdash; 2x wiecej wywolan LLM na runde</li>\n        <li>Wolny &mdash; op&oacute;znienie rosnie z kazda runda</li>\n        <li>Jakosc oceny zalezy od modelu</li>\n      </ul>\n    </div>\n  </div>\n</div>\n", "slide-07-lats.html": "<div class=\"slide-content\">\n  <div class=\"slide-number-badge\">6</div>\n  <h2>LATS <span class=\"counter-badge orange\">N &#215; branches</span></h2>\n  <p><strong>Language Agent Tree Search</strong> &mdash; agent eksploruje <strong>wiele sciezek rozumowania</strong> jednoczesnie, oceniajac kazda i cofajac sie z slepych zau&lstrok;kow.</p>\n\n  <h3 class=\"fragment\">Drzewo wyszukiwania</h3>\n  <pre class=\"diagram fragment\">User: \"Rozwiaz problem matematyczny: ...\"\n\n                    &#9484;&#9472;&#9472; Start &#9472;&#9472;&#9488;\n                   /           \\\n          Path A: \"use algebra\"  Path B: \"try substitution\"\n                /        \\              \\\n    A1: result=3 &#10003;    A2: error    B1: result=3 &#10003;\n                                   /          \\\n                              B1a: verify &#10003;   B1b: edge case\n                                                   &#9474;\n                                             backtrack &#8594; B1a is best</pre>\n\n  <ol class=\"steps\">\n    <li class=\"fragment\">LLM generuje wiele mozliwych akcji (galezie)</li>\n    <li class=\"fragment\">Kazda galaz jest oceniana (scoring LLM lub wynik narzedzia)</li>\n    <li class=\"fragment\">Obiecujace galezie sa eksplorowane glebiej</li>\n    <li class=\"fragment\">Slepe zau&lstrok;ki sa odcinane (backtracking)</li>\n    <li class=\"fragment\">Najlepsza sciezka do rozwiazania jest wybierana</li>\n  </ol>\n\n  <div class=\"two-columns fragment\">\n    <div class=\"column strengths\">\n      <h4>Zalety</h4>\n      <ul>\n        <li>Wiele podejsc do tego samego problemu</li>\n        <li>Wbudowane cofanie z blednych sciezek</li>\n        <li>Czesto lepsze rozwiazania niz single-path</li>\n      </ul>\n    </div>\n    <div class=\"column weaknesses\">\n      <h4>Wady</h4>\n      <ul>\n        <li>Bardzo drogi &mdash; wiele sciezek, kazda z LLM</li>\n        <li>Trudny w implementacji</li>\n        <li>Powolny &mdash; wiele sciezek ewaluowanych sekwencyjalnie</li>\n      </ul>\n    </div>\n  </div>\n\n  <div class=\"callout callout-warning fragment\">\n    <p>Zarezerwowany dla <strong>zlozonych zadan reasoningowych</strong>: matematyka, logika, planowanie. Overkill dla wiekszosci zadan informacyjnych.</p>\n  </div>\n</div>\n", "slide-08-multi-agent.html": "<div class=\"slide-content\">\n  <div class=\"slide-number-badge\">7</div>\n  <h2>Multi-Agent Orchestration</h2>\n  <p>Wzorce kompozycji <strong>wielu agent&oacute;w</strong> w wieksze systemy. To co NAT's YAML composition umozliwia w Cwiczeniu 4.</p>\n\n  <div class=\"patterns-grid\">\n    <div class=\"pattern-card fragment\">\n      <h4>Router (Hub-and-Spoke) <span class=\"exercise-badge\" style=\"margin:0;font-size:10px;padding:2px 8px;\">&#9654; Cw. 4</span></h4>\n      <pre class=\"diagram\">        &#9484;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9488;\n        &#9474; Orchestrator &#9474;\n        &#9492;&#9472;&#9472;&#9472;&#9472;&#9472;&#9508;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9496;\n       /        |        \\\nResearch   Write     Code\n Agent     Agent     Agent</pre>\n      <p>Jeden orchestrator kieruje zapytanie do specjalisty. Wzorzec z Cwiczenia 4.</p>\n    </div>\n    <div class=\"pattern-card fragment\">\n      <h4>Sequential Pipeline</h4>\n      <pre class=\"diagram\">&#9484;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9488;   &#9484;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9488;   &#9484;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9488;\n&#9474;Research &#9474;&#9472;&#9472;&#8594;&#9474;Analyze  &#9474;&#9472;&#9472;&#8594;&#9474;Write    &#9474;\n&#9474;Agent    &#9474;   &#9474;Agent    &#9474;   &#9474;Agent    &#9474;\n&#9492;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9496;   &#9492;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9496;   &#9492;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9496;</pre>\n      <p>Agenci przekazuja wyniki w lancuchu. Deterministyczny &mdash; bez decyzji routingu.</p>\n    </div>\n    <div class=\"pattern-card fragment\">\n      <h4>Parallel Fan-out</h4>\n      <pre class=\"diagram\">      &#9484;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9488;\n      &#9474;Splitter  &#9474;\n      &#9492;&#9472;&#9472;&#9472;&#9508;&#9472;&#9472;&#9472;&#9472;&#9496;\n   /       |       \\\nAgent1  Agent2  Agent3  &#8592; jednoczesnie\n   \\       |       /\n    &#9484;&#9472;&#9472;&#9472;&#9472;&#9472;&#9508;&#9472;&#9472;&#9472;&#9472;&#9488;\n    &#9474; Aggregator  &#9474;\n    &#9492;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9496;</pre>\n      <p>Wielu agent&oacute;w pracuje r&oacute;wnolegle, potem agregacja. Szybszy dla niezaleznych podzadan.</p>\n    </div>\n    <div class=\"pattern-card fragment\">\n      <h4>Hierarchical</h4>\n      <pre class=\"diagram\">    &#9484;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9488;\n    &#9474;  Manager     &#9474;\n    &#9492;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9508;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9496;\n      &#9484;&#9472;&#9472;&#9472;&#9508;&#9472;&#9472;&#9472;&#9472;&#9488;\n TeamLead1  TeamLead2\n   / \\         / \\\n  A   B       C   D</pre>\n      <p>Wielopoziomowa delegacja. Skalowalny do duzych, zlozonych workflows.</p>\n    </div>\n  </div>\n\n  <div class=\"callout callout-info fragment\">\n    <p><strong>Kiedy ktory?</strong> Router &#8594; rozne capabilities, Pipeline &#8594; stale etapy, Parallel &#8594; niezalezne podzadania, Hierarchical &#8594; duze systemy.</p>\n  </div>\n</div>\n", "slide-09-comparison.html": "<div class=\"slide-content\">\n  <div class=\"slide-number-badge\">&#9876;</div>\n  <h2>Por&oacute;wnanie architektur</h2>\n  <p>Jak wybrac odpowiedni wzorzec? Kluczowe wymiary decyzyjne.</p>\n\n  <table class=\"comparison-table\">\n    <thead>\n      <tr>\n        <th>Wzorzec</th>\n        <th>Wywolania LLM</th>\n        <th>Adaptacyjnosc</th>\n        <th>Koszt token&oacute;w</th>\n        <th>Op&oacute;znienie</th>\n        <th>Wymagania modelu</th>\n      </tr>\n    </thead>\n    <tbody>\n      <tr class=\"fragment\">\n        <td>ReAct</td>\n        <td>N (na krok)</td>\n        <td class=\"rating-low\">Wysoka</td>\n        <td>Sredni</td>\n        <td>Srednie</td>\n        <td class=\"rating-low\">Niskie</td>\n      </tr>\n      <tr class=\"fragment\">\n        <td>Tool Calling</td>\n        <td>N</td>\n        <td class=\"rating-low\">Wysoka</td>\n        <td>Sredni</td>\n        <td class=\"rating-low\">Niskie</td>\n        <td>Srednie</td>\n      </tr>\n      <tr class=\"fragment\">\n        <td>ReWOO</td>\n        <td class=\"rating-low\">2-3</td>\n        <td class=\"rating-very-high\">Brak</td>\n        <td class=\"rating-low\">Niski</td>\n        <td class=\"rating-low\">Niskie</td>\n        <td class=\"rating-high\">Wysokie</td>\n      </tr>\n      <tr class=\"fragment\">\n        <td>Plan-and-Execute</td>\n        <td class=\"rating-medium\">2N</td>\n        <td>Srednia</td>\n        <td class=\"rating-medium\">Wysoki</td>\n        <td class=\"rating-medium\">Wysokie</td>\n        <td>Srednie</td>\n      </tr>\n      <tr class=\"fragment\">\n        <td>Reflexion</td>\n        <td class=\"rating-medium\">2&#215; iteracje</td>\n        <td>Srednia</td>\n        <td class=\"rating-medium\">Wysoki</td>\n        <td class=\"rating-medium\">Wysokie</td>\n        <td>Srednie</td>\n      </tr>\n      <tr class=\"fragment\">\n        <td>LATS</td>\n        <td class=\"rating-very-high\">N &#215; galezie</td>\n        <td class=\"rating-low\">Wysoka</td>\n        <td class=\"rating-very-high\">Bardzo wysoki</td>\n        <td class=\"rating-very-high\">Bardzo wysokie</td>\n        <td class=\"rating-high\">Wysokie</td>\n      </tr>\n    </tbody>\n  </table>\n\n  <div class=\"callout callout-info fragment\">\n    <p><strong>Zielony</strong> = zaleta/niski koszt, <strong>czerwony</strong> = koszt/wymaganie. Nie ma uniwersalnego wzorca &mdash; wybor zalezy od zadania, modelu i budzetu.</p>\n  </div>\n</div>\n", "slide-10-takeaway.html": "<div class=\"slide-content\">\n  <h2>Kluczowe wnioski</h2>\n  <p>Nie ma &ldquo;najlepszej&rdquo; architektury agenta. Wybor zalezy od kontekstu:</p>\n\n  <div class=\"takeaway-grid\">\n    <div class=\"takeaway-card fragment\">\n      <div class=\"takeaway-icon\">&#127919;</div>\n      <div>\n        <h4>Zlozonosc zadania</h4>\n        <p>Proste &#8594; Tool Calling / ReAct<br>Zlozone wieloetapowe &#8594; Plan-and-Execute</p>\n      </div>\n    </div>\n    <div class=\"takeaway-card fragment\">\n      <div class=\"takeaway-icon\">&#129504;</div>\n      <div>\n        <h4>Mozliwosci modelu</h4>\n        <p>Male modele (7B) &#8594; ReAct<br>ReWOO / LATS &#8594; silniejsze planowanie</p>\n      </div>\n    </div>\n    <div class=\"takeaway-card fragment\">\n      <div class=\"takeaway-icon\">&#9889;</div>\n      <div>\n        <h4>Tolerancja op&oacute;zni&eacute;n</h4>\n        <p>Real-time &#8594; Tool Calling<br>Batch &#8594; Reflexion, LATS</p>\n      </div>\n    </div>\n    <div class=\"takeaway-card fragment\">\n      <div class=\"takeaway-icon\">&#128176;</div>\n      <div>\n        <h4>Budzet koszt&oacute;w</h4>\n        <p>Oszczednie &#8594; ReWOO (2-3 wywolania)<br>Jakosc za wszelk&aogon; cene &#8594; Reflexion, LATS</p>\n      </div>\n    </div>\n    <div class=\"takeaway-card fragment\">\n      <div class=\"takeaway-icon\">&#128279;</div>\n      <div>\n        <h4>Orkiestracja</h4>\n        <p>Jedno zadanie &#8594; dowolny wzorzec<br>Wiele capabilities &#8594; Multi-Agent Router</p>\n      </div>\n    </div>\n    <div class=\"takeaway-card fragment\">\n      <div class=\"takeaway-icon\">&#128214;</div>\n      <div>\n        <h4>Dokumentacja</h4>\n        <p>Szczeg&oacute;ly: <code>docs/agent-types.md</code><br>Konfiguracja NAT: poszczeg&oacute;lne <code>config.yaml</code></p>\n      </div>\n    </div>\n  </div>\n\n  <div class=\"callout callout-tip callout-pulse fragment\">\n    <p>Na tym warsztacie uzywamy <strong>ReAct</strong> bo dziala niezawodnie z Bielik-Minitron-7B bez natywnego wsparcia tool calling, a jego transparentna petla rozumowania idealna do nauki i debugowania.</p>\n  </div>\n</div>\n"}
+  </script>
+
+  <!-- Progress bar -->
+  <div class="progress-bar" id="progress-bar" style="width: 0%"></div>
+
+  <!-- Navigation bar -->
+  <nav class="nav-bar">
+    <div class="nav-left">
+      <span class="nav-title">Architektury Agent&oacute;w AI</span>
+      <span class="nav-badge">Bielik Nest Builders</span>
+    </div>
+    <div class="nav-center">
+      <button class="nav-btn" onclick="prevSlide()" title="Previous slide">&#8592;</button>
+      <span class="nav-counter" id="slide-counter"><span class="current">1</span> / 11</span>
+      <button class="nav-btn" onclick="nextSlide()" title="Next slide">&#8594;</button>
+    </div>
+    <div class="nav-right">
+      <span class="nav-shortcut"><kbd>&larr;</kbd> <kbd>&rarr;</kbd> navigate</span>
+      <span class="nav-shortcut"><kbd>F</kbd> fullscreen</span>
+      <span class="nav-shortcut"><kbd>O</kbd> overview</span>
+      <span class="nav-shortcut"><kbd>S</kbd> notes</span>
+    </div>
+  </nav>
+
+  <!-- Slide viewport -->
+  <div class="slide-viewport">
+    <div class="slide-container loading" id="slide-container">
+      <div class="slide-content">
+        <p>Loading...</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Fragment progress dots -->
+  <div class="fragment-indicator" id="fragment-indicator">
+    <div id="fragment-dots"></div>
+  </div>
+
+  <!-- Speaker notes panel -->
+  <div class="speaker-notes" id="speaker-notes">
+    <div id="speaker-notes-content"></div>
+  </div>
+
+  <!-- Go-to overlay -->
+  <div class="goto-overlay" id="goto-overlay">
+    <div class="goto-box">
+      <h3>Go to slide</h3>
+      <input type="number" class="goto-input" id="goto-input" min="1" max="11" placeholder="1&ndash;11">
+      <p style="margin-top:12px;color:var(--text-muted);font-size:13px;">Press Enter to go, Escape to cancel</p>
+    </div>
+  </div>
+
+  <!-- Overview overlay -->
+  <div class="overview-overlay" id="overview-overlay">
+    <div class="overview-grid" id="overview-grid"></div>
+  </div>
+
+  <script>
+/* ═══════════════════════════════════════════════
+   Agent Architectures — Speaker Notes (Polish)
+   Press S during presentation to toggle notes
+   ═══════════════════════════════════════════════ */
+
+const SPEAKER_NOTES = {
+  0: {
+    time: '~1 min',
+    text: 'Tytulowa strona. Przedstaw sie, powiedz o czym bedzie prezentacja.',
+    points: [
+      'Przedstaw: imie, rola, zwiazek z projektem Bielik',
+      'Krotko: dzisiaj omowimy 7 architektur agentow AI — od ReAct po Multi-Agent',
+      'Wszystkie przyklady w kontekscie NAT (NVIDIA NeMo Agent Toolkit) + Bielik-Minitron-7B',
+      'Materialy: docs/agent-types.md ma pelna dokumentacje'
+    ]
+  },
+  1: {
+    time: '~3 min',
+    text: 'Wprowadzenie — co to jest architektura agenta i dlaczego ma znaczenie.',
+    points: [
+      'Zacznij od pytania: "Kto z was budowal agenta AI? Jakie problemy mieliscie?"',
+      'Architektura = wzorzec organizacji interakcji LLM-narzedzia',
+      'Pokaz spectrum — od prostego (Tool Calling, 1 krok) do zlozonego (LATS, drzewo)',
+      'Nacisknij: nie ma "najlepszej" architektury, jest odpowiednia do zadania',
+      'Klikniecie na spectrum przenosi do odpowiedniego slidu'
+    ]
+  },
+  2: {
+    time: '~5 min',
+    text: 'ReAct — glowna architektura uzywana na warsztatach.',
+    points: [
+      'Kluczowe: Thought → Action → Observation w petli',
+      'Pokaz diagram krok po kroku (fragmenty)',
+      'Zaznacz: transparentnosc — widac kazdy krok rozumowania',
+      'Dlaczego ReAct dla Bielik 7B? Nie wymaga natywnego tool calling',
+      'TO MY UZYWAMY — cwiczenia 1-4 w Part 2 oparte na ReAct',
+      'Slabosc: moze sie zapetlic, dlatego max_tool_calls w config.yaml'
+    ]
+  },
+  3: {
+    time: '~3 min',
+    text: 'Tool Calling Agent — natywne API do wywolywania funkcji.',
+    points: [
+      'Roznica vs ReAct: strukturalny JSON zamiast parsowania tekstu',
+      'Vantaggio: bardziej niezawodny, szybszy',
+      'Wymaganie: vLLM z --enable-auto-tool-choice + custom parser',
+      'Dla Bielik 7B: mozliwe ale wymaga odpowiedniej konfiguracji serwera',
+      'Jako ulepszenie ReAct gdy serwer wspiera tool calling'
+    ]
+  },
+  4: {
+    time: '~4 min',
+    text: 'ReWOO — planowanie upfront, potem rownolegle wykonanie.',
+    points: [
+      'Klucz: 3 fazy — Planner → Worker (rownolegle) → Solver',
+      'Pokaz jak narzedzia moga dzialac jednoczesnie',
+      'Tylko 2-3 wywolania LLM vs N w ReAct — duza oszczednosc',
+      'Idealny do: "porownaj X i Y" — kroki przewidywalne i niezalezne',
+      'Nie nadaje sie: eksploracja, gdzie nastepny krok zalezy od poprzedniego'
+    ]
+  },
+  5: {
+    time: '~4 min',
+    text: 'Plan-and-Execute — dekompozycja na podzadania.',
+    points: [
+      'Dwie role: Planner (strateg) i Executor (wykonawca)',
+      'Planner MOZE poprawiac plan po kazdym kroku — kluczowa roznica vs ReWOO',
+      'Cwiczenie 4: ReAct orchestrator = prosty Plan-and-Execute',
+      'Dobry do zlozonych zadan: research → analiza → raport',
+      'Koszt: 2 LLM per cykl (planner + executor)'
+    ]
+  },
+  6: {
+    time: '~3 min',
+    text: 'Reflexion — samokrytyka i iteracyjne poprawki.',
+    points: [
+      'Klucz: Agent dziala → Evaluator ocenia → Agent poprawia',
+      'Pokaz "quality meter" — jakosc rosnie z kazda runda',
+      'Dobre dla: raporty, kod, analiza — gdzie jakosc > szybkoosc',
+      'Nie dla: real-time chat (za wolny, 2x wywolan na runde)',
+      'Ciekawostka: evaluator moze byc tym samym LLM z innym promptem'
+    ]
+  },
+  7: {
+    time: '~3 min',
+    text: 'LATS — tree search dla zlozonego reasoningu.',
+    points: [
+      'Inspeiracja: Monte Carlo Tree Search z LLM jako heurystyka',
+      'Eksploruje wiele sciezek, cofa sie z slepych zauilkow',
+      'Bardzo drogi: N x gałęzie wywolan LLM',
+      'Dobry dla: matematyka, logika, planowanie',
+      'Overkill dla: information retrieval, proste queries',
+      'Rzadko uzywany w produkcji — glownie badania'
+    ]
+  },
+  8: {
+    time: '~4 min',
+    text: 'Multi-Agent — wzorce orkiestracji wielu agentow.',
+    points: [
+      '4 wzorce: Router, Pipeline, Parallel, Hierarchical',
+      'Router = Cwiczenie 4: Bielik jako orchestrator, research_agent + writing_crew',
+      'Pipeline: liniowy, przewidywalny, latwy do debugowania',
+      'Parallel: szybki dla niezaleznych podzadan',
+      'Hierarchical: duze systemy, wiele poziomow delegacji',
+      'NAT YAML composition umozliwia wszystkie te wzorce'
+    ]
+  },
+  9: {
+    time: '~3 min',
+    text: 'Porownanie — tabela decyzyjna.',
+    points: [
+      'Pokaz wiersz po wierszu (fragmenty)',
+      'Zielony = zaleta/low cost, czerwony = koszt/wymaganie',
+      'Zwróc uwage na: ReWOO (najtanszy) vs LATS (najdrozsszy)',
+      'Pytanie do publicznosci: "Ktory wzorzec wybralibyscie do X?"',
+      'Klucz: nie ma uniwersalnego — zalezy od zadania, modelu, budzetu'
+    ]
+  },
+  10: {
+    time: '~3 min',
+    text: 'Podsumowanie — kluczowe wnioski i odnosniki.',
+    points: [
+      'Kazda karta = jeden wymiar decyzyjny',
+      'Nasz wybor: ReAct — niezawodny z Bielik 7B, transparentny do nauki',
+      'Wskaz dokumentacje: docs/agent-types.md',
+      'Wskaz nastepny krok: cwiczenia w Part 2',
+      'Podziekuj, zachec do pytan'
+    ]
+  }
+};
+
+  </script>
+  <script>
+/* ═══════════════════════════════════════════════
+   Agent Architectures — Slide Engine
+   Navigation, fragments, speaker notes, animations
+   Works with both HTTP server and file:// protocol
+   ═══════════════════════════════════════════════ */
+
+const SLIDES = [
+  'slide-00-title.html',
+  'slide-01-overview.html',
+  'slide-02-react.html',
+  'slide-03-tool-calling.html',
+  'slide-04-rewod.html',
+  'slide-05-plan-execute.html',
+  'slide-06-reflexion.html',
+  'slide-07-lats.html',
+  'slide-08-multi-agent.html',
+  'slide-09-comparison.html',
+  'slide-10-takeaway.html',
+];
+
+let currentSlide = 0;
+let isTransitioning = false;
+let currentFragment = -1;
+let totalFragments = 0;
+let notesVisible = false;
+let useEmbeddedSlides = false;
+
+// Embedded slide content for file:// protocol support
+const EMBEDDED_SLIDES = {};
+
+// ─── DOM references ──────────────────────────
+
+const container = document.getElementById('slide-container');
+const progressBar = document.getElementById('progress-bar');
+const counterEl = document.getElementById('slide-counter');
+const gotoOverlay = document.getElementById('goto-overlay');
+const gotoInput = document.getElementById('goto-input');
+const overviewOverlay = document.getElementById('overview-overlay');
+const overviewGrid = document.getElementById('overview-grid');
+const speakerNotes = document.getElementById('speaker-notes');
+const speakerNotesContent = document.getElementById('speaker-notes-content');
+const fragmentIndicator = document.getElementById('fragment-indicator');
+const fragmentDots = document.getElementById('fragment-dots');
+
+// ─── Initialize ──────────────────────────────
+
+document.addEventListener('DOMContentLoaded', async () => {
+  // Try fetching first slide to detect if we need embedded mode
+  try {
+    const resp = await fetch(SLIDES[0]);
+    if (!resp.ok) throw new Error('fetch failed');
+    useEmbeddedSlides = false;
+  } catch (e) {
+    // file:// protocol — use embedded slides
+    useEmbeddedSlides = true;
+    loadEmbeddedSlides();
+  }
+
+  loadSlide(0);
+  buildOverviewGrid();
+  setupTouchSupport();
+});
+
+// ─── Embedded slides loader ──────────────────
+// Populated by serve.py or the inline script in index.html
+
+function loadEmbeddedSlides() {
+  // Look for embedded slide data in the document
+  const embeddedData = document.getElementById('embedded-slides-data');
+  if (embeddedData) {
+    try {
+      const data = JSON.parse(embeddedData.textContent);
+      Object.assign(EMBEDDED_SLIDES, data);
+    } catch (e) {
+      console.warn('Failed to parse embedded slides data');
+    }
+  }
+}
+
+// ─── Slide loading ───────────────────────────
+
+async function loadSlide(index, direction = 'forward') {
+  if (index < 0 || index >= SLIDES.length || isTransitioning) return;
+  isTransitioning = true;
+
+  // Exit animation
+  if (direction === 'forward') {
+    container.classList.add('exit-left');
+  } else {
+    container.style.opacity = '0';
+    container.style.transform = 'translateX(40px)';
+  }
+
+  await sleep(200);
+
+  // Load new content
+  try {
+    let html;
+    if (useEmbeddedSlides && EMBEDDED_SLIDES[SLIDES[index]]) {
+      html = EMBEDDED_SLIDES[SLIDES[index]];
+    } else {
+      const resp = await fetch(SLIDES[index]);
+      if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+      html = await resp.text();
+    }
+    container.innerHTML = html;
+  } catch (err) {
+    container.innerHTML = `<div class="slide-content"><h2>Error loading slide</h2><p>${err.message}</p></div>`;
+  }
+
+  currentSlide = index;
+  resetFragments();
+  updateUI();
+  updateSpeakerNotes();
+
+  // Enter animation
+  container.classList.remove('exit-left');
+  container.classList.add('loading');
+
+  // Force reflow
+  void container.offsetHeight;
+
+  await sleep(50);
+  container.classList.remove('loading');
+  container.style.transform = '';
+  container.style.opacity = '';
+
+  isTransitioning = false;
+
+  // Auto-reveal first fragment after a beat if any exist
+  if (totalFragments === 0) {
+    hideFragmentIndicator();
+  }
+}
+
+// ─── Fragment System ─────────────────────────
+
+function resetFragments() {
+  currentFragment = -1;
+  const fragments = getFragments();
+  totalFragments = fragments.length;
+
+  // Hide all fragments
+  fragments.forEach(f => f.classList.remove('revealed'));
+
+  updateFragmentIndicator();
+}
+
+function getFragments() {
+  return Array.from(container.querySelectorAll('.fragment'));
+}
+
+function revealNextFragment() {
+  const fragments = getFragments();
+  if (currentFragment >= totalFragments - 1) return false;
+
+  currentFragment++;
+  fragments[currentFragment].classList.add('revealed');
+
+  // Trigger special effects based on fragment data attributes
+  const frag = fragments[currentFragment];
+  if (frag.dataset.qualityMeter) {
+    updateQualityMeter(frag.dataset.qualityMeter);
+  }
+  if (frag.dataset.highlightRow) {
+    highlightTableRow(frag.dataset.highlightRow);
+  }
+
+  updateFragmentIndicator();
+  return true;
+}
+
+function hasUnrevealedFragments() {
+  return currentFragment < totalFragments - 1;
+}
+
+function updateFragmentIndicator() {
+  if (totalFragments === 0) {
+    hideFragmentIndicator();
+    return;
+  }
+
+  fragmentIndicator.classList.add('visible');
+  let html = '';
+  for (let i = 0; i < totalFragments; i++) {
+    const cls = i <= currentFragment ? 'fragment-dot revealed' : 'fragment-dot';
+    html += `<div class="${cls}"></div>`;
+  }
+  fragmentDots.innerHTML = html;
+}
+
+function hideFragmentIndicator() {
+  fragmentIndicator.classList.remove('visible');
+}
+
+// ─── Quality Meter (Reflexion slide) ────────
+
+function updateQualityMeter(value) {
+  const fill = container.querySelector('.quality-fill');
+  const label = container.querySelector('.quality-label');
+  if (fill && label) {
+    fill.style.width = value + '%';
+    label.textContent = value + '%';
+  }
+}
+
+// ─── Table Row Highlight (Comparison slide) ─
+
+function highlightTableRow(index) {
+  const rows = container.querySelectorAll('.comparison-table tbody tr');
+  rows.forEach(r => r.classList.remove('row-revealed'));
+  const target = rows[parseInt(index)];
+  if (target) {
+    target.classList.add('row-revealed');
+  }
+}
+
+// ─── UI updates ──────────────────────────────
+
+function updateUI() {
+  const total = SLIDES.length;
+  const current = currentSlide + 1;
+
+  // Progress bar
+  progressBar.style.width = `${(current / total) * 100}%`;
+
+  // Counter
+  counterEl.innerHTML = `<span class="current">${current}</span> / ${total}`;
+
+  // Update title
+  document.title = `Agent Architectures — ${current}/${total}`;
+}
+
+// ─── Speaker Notes ──────────────────────────
+
+function updateSpeakerNotes() {
+  if (!speakerNotesContent) return;
+
+  if (typeof SPEAKER_NOTES !== 'undefined' && SPEAKER_NOTES[currentSlide]) {
+    const note = SPEAKER_NOTES[currentSlide];
+    speakerNotesContent.innerHTML = `
+      <div class="speaker-notes-header">
+        <span class="speaker-notes-label">Speaker Notes</span>
+        <span class="speaker-notes-time">${note.time || ''}</span>
+      </div>
+      <p>${note.text}</p>
+      ${note.points ? `<ul>${note.points.map(p => `<li>${p}</li>`).join('')}</ul>` : ''}
+    `;
+  } else {
+    speakerNotesContent.innerHTML = `
+      <div class="speaker-notes-header">
+        <span class="speaker-notes-label">Speaker Notes</span>
+      </div>
+      <p>No notes for this slide.</p>
+    `;
+  }
+}
+
+function toggleSpeakerNotes() {
+  notesVisible = !notesVisible;
+  speakerNotes.classList.toggle('visible', notesVisible);
+}
+
+// ─── Navigation ──────────────────────────────
+
+function nextSlide() {
+  // First try to reveal fragments
+  if (hasUnrevealedFragments()) {
+    revealNextFragment();
+    return;
+  }
+  // Then advance slide
+  if (currentSlide < SLIDES.length - 1) {
+    loadSlide(currentSlide + 1, 'forward');
+  }
+}
+
+function prevSlide() {
+  // Go to previous slide (fragments auto-reset)
+  if (currentSlide > 0) {
+    loadSlide(currentSlide - 1, 'backward');
+  }
+}
+
+function goToSlide(index) {
+  const dir = index > currentSlide ? 'forward' : 'backward';
+  loadSlide(index, dir);
+}
+
+// ─── Keyboard ────────────────────────────────
+
+document.addEventListener('keydown', (e) => {
+  // Goto overlay active
+  if (gotoOverlay.classList.contains('active')) {
+    if (e.key === 'Escape') {
+      closeGoto();
+    } else if (e.key === 'Enter') {
+      const num = parseInt(gotoInput.value, 10);
+      if (num >= 1 && num <= SLIDES.length) {
+        closeGoto();
+        goToSlide(num - 1);
+      }
+    }
+    return;
+  }
+
+  // Overview overlay active
+  if (overviewOverlay.classList.contains('active')) {
+    if (e.key === 'Escape' || e.key === 'o' || e.key === 'O') {
+      overviewOverlay.classList.remove('active');
+    }
+    return;
+  }
+
+  switch (e.key) {
+    case 'ArrowRight':
+    case 'ArrowDown':
+    case ' ':
+    case 'PageDown':
+      e.preventDefault();
+      nextSlide();
+      break;
+    case 'ArrowLeft':
+    case 'ArrowUp':
+    case 'PageUp':
+      e.preventDefault();
+      prevSlide();
+      break;
+    case 'Home':
+      e.preventDefault();
+      goToSlide(0);
+      break;
+    case 'End':
+      e.preventDefault();
+      goToSlide(SLIDES.length - 1);
+      break;
+    case 'f':
+    case 'F':
+      toggleFullscreen();
+      break;
+    case 'g':
+    case 'G':
+      openGoto();
+      break;
+    case 'o':
+    case 'O':
+      toggleOverview();
+      break;
+    case 's':
+    case 'S':
+      toggleSpeakerNotes();
+      break;
+    case 'Escape':
+      if (notesVisible) {
+        toggleSpeakerNotes();
+      } else if (document.fullscreenElement) {
+        document.exitFullscreen();
+      }
+      break;
+  }
+});
+
+// ─── Touch support ───────────────────────────
+
+function setupTouchSupport() {
+  let touchStartX = 0;
+  let touchStartY = 0;
+
+  document.addEventListener('touchstart', (e) => {
+    touchStartX = e.touches[0].clientX;
+    touchStartY = e.touches[0].clientY;
+  }, { passive: true });
+
+  document.addEventListener('touchend', (e) => {
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    const dy = e.changedTouches[0].clientY - touchStartY;
+
+    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) {
+      if (dx < 0) nextSlide();
+      else prevSlide();
+    }
+  }, { passive: true });
+}
+
+// ─── Fullscreen ──────────────────────────────
+
+function toggleFullscreen() {
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen().catch(() => {});
+  } else {
+    document.exitFullscreen();
+  }
+}
+
+// ─── Go-to slide ─────────────────────────────
+
+function openGoto() {
+  gotoOverlay.classList.add('active');
+  gotoInput.value = '';
+  gotoInput.focus();
+}
+
+function closeGoto() {
+  gotoOverlay.classList.remove('active');
+}
+
+// ─── Overview grid ───────────────────────────
+
+function buildOverviewGrid() {
+  const titles = [
+    'Architektury Agent&oacute;w AI',
+    'Dlaczego architektura ma znaczenie?',
+    'ReAct (Reasoning + Acting)',
+    'Tool Calling Agent',
+    'ReWOO (Reasoning Without Observation)',
+    'Plan-and-Execute',
+    'Reflexion',
+    'LATS (Language Agent Tree Search)',
+    'Multi-Agent Orchestration',
+    'Por&oacute;wnanie architektur',
+    'Kluczowe wnioski',
+  ];
+
+  overviewGrid.innerHTML = titles.map((title, i) => `
+    <div class="overview-card" onclick="goFromOverview(${i})">
+      <div class="card-num">Slide ${i + 1}</div>
+      <div class="card-title">${title}</div>
+    </div>
+  `).join('');
+}
+
+function goFromOverview(index) {
+  overviewOverlay.classList.remove('active');
+  goToSlide(index);
+}
+
+function toggleOverview() {
+  overviewOverlay.classList.toggle('active');
+}
+
+// ─── Spectrum Click Navigation ───────────────
+
+document.addEventListener('click', (e) => {
+  const item = e.target.closest('.spectrum-item');
+  if (item) {
+    const slideIndex = parseInt(item.dataset.slide);
+    if (!isNaN(slideIndex) && slideIndex >= 0 && slideIndex < SLIDES.length) {
+      goToSlide(slideIndex);
+    }
+  }
+});
+
+// ─── Utility ─────────────────────────────────
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+  </script>
+</body>
+</html>

@@ -1,0 +1,72 @@
+<div class="slide-content">
+  <div class="slide-number-badge">&#9876;</div>
+  <h2>Por&oacute;wnanie architektur</h2>
+  <p>Jak wybrac odpowiedni wzorzec? Kluczowe wymiary decyzyjne.</p>
+
+  <table class="comparison-table">
+    <thead>
+      <tr>
+        <th>Wzorzec</th>
+        <th>Wywolania LLM</th>
+        <th>Adaptacyjnosc</th>
+        <th>Koszt token&oacute;w</th>
+        <th>Op&oacute;znienie</th>
+        <th>Wymagania modelu</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="fragment">
+        <td>ReAct</td>
+        <td>N (na krok)</td>
+        <td class="rating-low">Wysoka</td>
+        <td>Sredni</td>
+        <td>Srednie</td>
+        <td class="rating-low">Niskie</td>
+      </tr>
+      <tr class="fragment">
+        <td>Tool Calling</td>
+        <td>N</td>
+        <td class="rating-low">Wysoka</td>
+        <td>Sredni</td>
+        <td class="rating-low">Niskie</td>
+        <td>Srednie</td>
+      </tr>
+      <tr class="fragment">
+        <td>ReWOO</td>
+        <td class="rating-low">2-3</td>
+        <td class="rating-very-high">Brak</td>
+        <td class="rating-low">Niski</td>
+        <td class="rating-low">Niskie</td>
+        <td class="rating-high">Wysokie</td>
+      </tr>
+      <tr class="fragment">
+        <td>Plan-and-Execute</td>
+        <td class="rating-medium">2N</td>
+        <td>Srednia</td>
+        <td class="rating-medium">Wysoki</td>
+        <td class="rating-medium">Wysokie</td>
+        <td>Srednie</td>
+      </tr>
+      <tr class="fragment">
+        <td>Reflexion</td>
+        <td class="rating-medium">2&#215; iteracje</td>
+        <td>Srednia</td>
+        <td class="rating-medium">Wysoki</td>
+        <td class="rating-medium">Wysokie</td>
+        <td>Srednie</td>
+      </tr>
+      <tr class="fragment">
+        <td>LATS</td>
+        <td class="rating-very-high">N &#215; galezie</td>
+        <td class="rating-low">Wysoka</td>
+        <td class="rating-very-high">Bardzo wysoki</td>
+        <td class="rating-very-high">Bardzo wysokie</td>
+        <td class="rating-high">Wysokie</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout callout-info fragment">
+    <p><strong>Zielony</strong> = zaleta/niski koszt, <strong>czerwony</strong> = koszt/wymaganie. Nie ma uniwersalnego wzorca &mdash; wybor zalezy od zadania, modelu i budzetu.</p>
+  </div>
+</div>

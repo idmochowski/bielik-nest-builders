@@ -1,0 +1,49 @@
+<div class="slide-content">
+  <div class="slide-number-badge">2</div>
+  <h2>Tool Calling Agent <span class="counter-badge green">vs ReAct</span></h2>
+  <p>Model uzywa <strong>natywnego API</strong> do wywolywania funkcji &mdash; strukturalne JSON zamiast parsowania tekstu.</p>
+
+  <pre class="diagram fragment">User: "Jaka jest pogoda w Warszawie?"
+
+&#9484;&#9472;&#9472; LLM &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9488;
+&#9474; Returns structured tool_call:                       &#9474;
+&#9474;   {"name": "get_weather", "args": {"city": "Warszawa"}} &#9474;
+&#9492;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9496;
+                      &#9474;
+                      &#9660;
+              &#9484;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9488;
+              &#9474; Tool: weather&#9474; &#9472;&#9472;&#8594; {"temp": 12, "conditions": "s&#322;onecznie"}
+              &#9492;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9496;</pre>
+
+  <pre class="diagram fragment">&#9484;&#9472;&#9472; LLM &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9488;
+&#9474; Final Answer: W Warszawie jest 12&#176;C, s&#322;onecznie.    &#9474;
+&#9492;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9496;</pre>
+
+  <div class="two-columns fragment">
+    <div class="column strengths">
+      <h4>Zalety</h4>
+      <ul>
+        <li>Bardziej niezawodny &mdash; brak parsowania tekstu</li>
+        <li>Szybszy &mdash; brak narzutu promptu ReAct</li>
+        <li>R&oacute;wnolegle wywolania narzedzi</li>
+      </ul>
+    </div>
+    <div class="column weaknesses">
+      <h4>Wady</h4>
+      <ul>
+        <li>Wymaga wsparcia modelu + serwera (vLLM)</li>
+        <li>Mniej transparentny &mdash; rozumowanie ukryte</li>
+        <li>Mniejsze modele moga miec trudnosci</li>
+      </ul>
+    </div>
+  </div>
+
+  <pre class="config fragment">workflow:
+  _type: tool_calling_agent
+  tool_names: [wiki_search, current_datetime]
+  llm_name: bielik</pre>
+
+  <div class="callout callout-warning fragment">
+    <p>Wymaga vLLM skonfigurowanego z <code>--enable-auto-tool-choice</code> i customowym parserem narzedzi.</p>
+  </div>
+</div>
