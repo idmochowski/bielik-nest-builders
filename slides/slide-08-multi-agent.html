@@ -1,54 +1,41 @@
 <div class="slide-content">
   <div class="slide-number-badge">7</div>
   <h2>Multi-Agent Orchestration</h2>
-  <p>Wzorce kompozycji <strong>wielu agent&oacute;w</strong> w wieksze systemy. To co NAT's YAML composition umozliwia w Cwiczeniu 4.</p>
+  <p>Wzorce kompozycji <strong>wielu agentów</strong> w większe systemy. To co NAT YAML composition umożliwia w Ćwiczeniu 4.</p>
 
   <div class="patterns-grid">
     <div class="pattern-card fragment">
-      <h4>Router (Hub-and-Spoke) <span class="exercise-badge" style="margin:0;font-size:10px;padding:2px 8px;">&#9654; Cw. 4</span></h4>
-      <pre class="diagram">        &#9484;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9488;
-        &#9474; Orchestrator &#9474;
-        &#9492;&#9472;&#9472;&#9472;&#9472;&#9472;&#9508;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9496;
-       /        |        \
-Research   Write     Code
- Agent     Agent     Agent</pre>
-      <p>Jeden orchestrator kieruje zapytanie do specjalisty. Wzorzec z Cwiczenia 4.</p>
+      <h4>Router (Hub-and-Spoke) <span class="exercise-badge" style="margin:0;font-size:10px;padding:2px 8px;">▶ Ćw. 4</span></h4>
+      <pre class="diagram">         ┌──────────────┐
+         │ Orchestrator │
+         └──┬───┬───┬───┘
+      ┌─────┘   │   └─────┐
+      ▼         ▼         ▼
+  Research   Write     Code</pre>
+      <p>Jeden orchestrator kieruje zapytanie do specjalisty. Wzorzec z Ćwiczenia 4.</p>
     </div>
     <div class="pattern-card fragment">
       <h4>Sequential Pipeline</h4>
-      <pre class="diagram">&#9484;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9488;   &#9484;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9488;   &#9484;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9488;
-&#9474;Research &#9474;&#9472;&#9472;&#8594;&#9474;Analyze  &#9474;&#9472;&#9472;&#8594;&#9474;Write    &#9474;
-&#9474;Agent    &#9474;   &#9474;Agent    &#9474;   &#9474;Agent    &#9474;
-&#9492;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9496;   &#9492;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9496;   &#9492;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9496;</pre>
-      <p>Agenci przekazuja wyniki w lancuchu. Deterministyczny &mdash; bez decyzji routingu.</p>
+      <pre class="diagram">  Research → Analyze → Write</pre>
+      <p>Agenci przekazują wyniki w łańcuchu. Deterministyczny — bez decyzji routingu.</p>
     </div>
     <div class="pattern-card fragment">
       <h4>Parallel Fan-out</h4>
-      <pre class="diagram">      &#9484;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9488;
-      &#9474;Splitter  &#9474;
-      &#9492;&#9472;&#9472;&#9472;&#9508;&#9472;&#9472;&#9472;&#9472;&#9496;
-   /       |       \
-Agent1  Agent2  Agent3  &#8592; jednoczesnie
-   \       |       /
-    &#9484;&#9472;&#9472;&#9472;&#9472;&#9472;&#9508;&#9472;&#9472;&#9472;&#9472;&#9488;
-    &#9474; Aggregator  &#9474;
-    &#9492;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9496;</pre>
-      <p>Wielu agent&oacute;w pracuje r&oacute;wnolegle, potem agregacja. Szybszy dla niezaleznych podzadan.</p>
+      <pre class="diagram">       ┌─ Agent 1 ─┐
+  Split┤  Agent 2  ├┤ Merge
+       └─ Agent 3 ─┘</pre>
+      <p>Wielu agentów pracuje równolegle, potem agregacja. Szybszy dla niezależnych podzadań.</p>
     </div>
     <div class="pattern-card fragment">
       <h4>Hierarchical</h4>
-      <pre class="diagram">    &#9484;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9488;
-    &#9474;  Manager     &#9474;
-    &#9492;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9508;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9496;
-      &#9484;&#9472;&#9472;&#9472;&#9508;&#9472;&#9472;&#9472;&#9472;&#9488;
- TeamLead1  TeamLead2
-   / \         / \
-  A   B       C   D</pre>
-      <p>Wielopoziomowa delegacja. Skalowalny do duzych, zlozonych workflows.</p>
+      <pre class="diagram">         Manager
+        ┌───┴───┐
+     Team1     Team2</pre>
+      <p>Wielopoziomowa delegacja. Skalowalny do dużych, złożonych workflows.</p>
     </div>
   </div>
 
   <div class="callout callout-info fragment">
-    <p><strong>Kiedy ktory?</strong> Router &#8594; rozne capabilities, Pipeline &#8594; stale etapy, Parallel &#8594; niezalezne podzadania, Hierarchical &#8594; duze systemy.</p>
+    <p><strong>Kiedy który?</strong> Router → różne capabilities, Pipeline → stałe etapy, Parallel → niezależne podzadania, Hierarchical → duże systemy.</p>
   </div>
 </div>

@@ -1,48 +1,54 @@
 <div class="slide-content">
   <div class="slide-number-badge">4</div>
   <h2>Plan-and-Execute <span class="counter-badge orange">2N LLM calls</span></h2>
-  <p>Dwie fazy: <strong>planer</strong> (LLM) dekomponuje zadanie na kroki, <strong>executor</strong> wykonuje kazdy krok sekwencyjalnie. Planer moze poprawiac plan po kazdym kroku.</p>
+  <p>Dwie fazy: <strong>planer</strong> (LLM) dekomponuje zadanie na kroki, <strong>executor</strong> wykonuje każdy krok sekwencyjnie. Planer może poprawiać plan po każdym kroku.</p>
 
-  <div class="exercise-badge fragment">&#9654; Cwiczenie 4 (unified workflow)</div>
+  <div class="exercise-badge fragment">▶ Ćwiczenie 4 (unified workflow)</div>
 
-  <h3 class="fragment">Planner dekomponuje zadanie</h3>
-  <pre class="diagram fragment">User: "Napisz raport o stanie AI w Polsce."
-
-&#9484;&#9472;&#9472; Planner (LLM) &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9488;
-&#9474; Step 1: Research AI companies in Poland              &#9474;
-&#9474; Step 2: Research AI education in Poland              &#9474;
-&#9474; Step 3: Research government AI initiatives           &#9474;
-&#9474; Step 4: Write report combining all findings          &#9474;
-&#9492;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9496;</pre>
-
-  <h3 class="fragment">Executor realizuje plan krok po kroku</h3>
-  <pre class="diagram fragment">&#9484;&#9472;&#9472; Executor &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9488;
-&#9474; Executes Step 1 &#8594; result1                           &#9474;
-&#9474; Executes Step 2 &#8594; result2                           &#9474;
-&#9474; Executes Step 3 &#8594; result3                           &#9474;
-&#9474; Executes Step 4 (using result1+2+3) &#8594; final report  &#9474;
-&#9492;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9496;</pre>
+  <pre class="diagram fragment">  User: "Napisz raport o stanie AI w Polsce."
+           │
+           ▼
+  ┌─────────────────────────────────────────────────────┐
+  │  PLANNER (LLM) — dekomponuje na kroki                │
+  │                                                      │
+  │  Step 1: Research companies                           │
+  │  Step 2: Research education                           │
+  │  Step 3: Research initiatives                         │
+  │  Step 4: Combine into report                         │
+  └──────────────────────┬──────────────────────────────┘
+                         │
+           ┌─────────────▼─────────────────────┐
+           │  EXECUTOR — krok po kroku          │
+           │                                    │
+           │  Step 1 → result1                  │
+           │    │  (planer może poprawić plan)  │
+           │  Step 2 → result2                  │
+           │    │                               │
+           │  Step 3 → result3                  │
+           │    │                               │
+           │  Step 4 → Final Report             │
+           └────────────────────────────────────┘</pre>
 
   <div class="two-columns fragment">
     <div class="column strengths">
       <h4>Zalety</h4>
       <ul>
-        <li>Obsluguje zlozone, wieloetapowe zadania</li>
-        <li>Planer adaptuje plan do wynik&oacute;w</li>
-        <li>Jasny podzial r&oacute;l: planowanie vs. wykonanie</li>
+        <li>Obsługuje złożone, wieloetapowe zadania</li>
+        <li>Planer adaptuje plan do wyników</li>
+        <li>Jasny podział ról: planowanie vs. wykonanie</li>
       </ul>
     </div>
     <div class="column weaknesses">
       <h4>Wady</h4>
       <ul>
-        <li>Wyzsze op&oacute;znienie &mdash; 2 LLM per cykl</li>
-        <li>Przerost dla prostych zadan</li>
-        <li>Bledy planowania kumuluja sie</li>
+        <li>Wyższe opóźnienie — 2 LLM per cykl</li>
+        <li>Przerost dla prostych zadań</li>
+        <li>Błędy planowania kumulują się</li>
       </ul>
     </div>
   </div>
 
   <div class="callout callout-tip fragment">
-    <p><strong>Cwiczenie 4</strong> uzywa tego wzorca &mdash; ReAct orchestrator decyduje kiedy wywolac agenta badawczego, a kiedy crew pisarski.</p>
+    <p><strong>Ćwiczenie 4</strong> używa tego wzorca — ReAct orchestrator decyduje kiedy wywołać agenta badawczego, a kiedy crew pisarski.</p>
   </div>
 </div>

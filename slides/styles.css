@@ -464,21 +464,39 @@ pre.config::before {
   border-radius: 0 0 4px 4px;
 }
 
-/* ─── Animated diagram lines ───────────────── */
+/* ─── CSS Diagrams ─────────────────────────── */
 
-.diagram-animated {
-  position: relative;
+.diagram-box {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-default);
+  border-radius: 8px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 16px 0;
+  font-size: 14px;
 }
 
-.diagram-animated .diagram-line {
-  opacity: 0;
-  animation: diagramLineIn 0.4s ease forwards;
+.diagram-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-@keyframes diagramLineIn {
-  from { opacity: 0; transform: translateX(-8px); }
-  to { opacity: 1; transform: translateX(0); }
+.diagram-node {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-muted);
+  border-radius: 4px;
+  padding: 8px 12px;
+  text-align: center;
 }
+
+.diagram-arrow {
+  color: var(--accent-blue);
+  font-size: 18px;
+}
+
 
 /* ─── Callout Boxes ─────────────────────────── */
 

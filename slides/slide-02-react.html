@@ -1,41 +1,41 @@
 <div class="slide-content">
   <div class="slide-number-badge">1</div>
   <h2>ReAct <span class="gradient-text">(Reasoning + Acting)</span></h2>
-  <p>Agent przeplata <strong>myslenie</strong> i <strong>dzialanie</strong> w petli. Kazdy krok: model rozumuje, wykonuje akcje, obserwuje wynik, i rozumuje ponownie.</p>
+  <p>Agent przeplata <strong>myślenie</strong> i <strong>działanie</strong> w pętli. Każdy krok: model rozumuje, wykonuje akcję, obserwuje wynik, i rozumuje ponownie.</p>
 
-  <pre class="diagram fragment">User: "Kim byl Mikolaj Kopernik?"
-
-&#9484;&#9472;&#9472; LLM &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9488;
-&#9474; Thought: I need to search Wikipedia for Copernicus  &#9474;
-&#9474; Action: wiki_search("Mikolaj Kopernik")             &#9474;
-&#9492;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9496;
-                      &#9474;
-                      &#9660;
-              &#9484;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9488;
-              &#9474; Tool: search &#9474; &#9472;&#9472;&#8594; returns Wikipedia article
-              &#9492;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9496;</pre>
-
-  <pre class="diagram fragment">&#9484;&#9472;&#9472; LLM &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9488;
-&#9474; Observation: [Wikipedia content about Copernicus]   &#9474;
-&#9474; Thought: I now have enough information              &#9474;
-&#9474; Final Answer: Mikolaj Kopernik byl...               &#9474;
-&#9492;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9496;</pre>
+  <pre class="diagram fragment">  User: "Kim był Mikołaj Kopernik?"
+           │
+           ▼
+  ┌─────────────────────────────────────────────┐
+  │  Thought: Szukam w Wikipedii o Koperniku    │
+  │  Action:  wiki_search("Mikołaj Kopernik")   │
+  └──────────────────────┬──────────────────────┘
+                         │
+           ┌─────────────▼──────────────┐
+           │  Tool → artykuł Wikipedii  │
+           └─────────────┬──────────────┘
+                         │
+           ┌─────────────▼──────────────────────┐
+           │  Observation: [treść o Koperniku]   │
+           │  Thought: Mam wystarczająco info    │
+           │  Final Answer: Mikołaj Kopernik...  │
+           └─────────────────────────────────────┘</pre>
 
   <div class="two-columns fragment">
     <div class="column strengths">
       <h4>Zalety</h4>
       <ul>
-        <li>Transparentny &mdash; kazdy krok rozumowania widoczny</li>
-        <li>Elastyczny &mdash; model adaptuje plan do wynik&oacute;w</li>
-        <li>Dziala z modelami tekstowymi (jak Bielik 7B)</li>
+        <li>Transparentny — każdy krok rozumowania widoczny</li>
+        <li>Elastyczny — model adaptuje plan do wyników</li>
+        <li>Działa z modelami tekstowymi (jak Bielik 7B)</li>
       </ul>
     </div>
     <div class="column weaknesses">
       <h4>Wady</h4>
       <ul>
-        <li>Token-heavy &mdash; pelna historia w kazdym zapytaniu</li>
-        <li>Moze zapetlic sie bez Final Answer</li>
-        <li>Sekwencyjny &mdash; narzedzia jedno po drugim</li>
+        <li>Token-heavy — pełna historia w każdym zapytaniu</li>
+        <li>Może zapętlić się bez Final Answer</li>
+        <li>Sekwencyjny — narzędzia jedno po drugim</li>
       </ul>
     </div>
   </div>
@@ -47,6 +47,6 @@
   max_tool_calls: 5</pre>
 
   <div class="callout callout-tip callout-pulse fragment">
-    <p><strong>Uzywamy w tym warsztacie!</strong> ReAct dziala niezawodnie z Bielik-Minitron-7B bez natywnego wsparcia tool calling. Cwiczenia 1&ndash;4 w Part 2.</p>
+    <p><strong>Używamy w tym warsztacie!</strong> ReAct działa niezawodnie z Bielik-Minitron-7B bez natywnego wsparcia tool calling. Ćwiczenia 1–4 w Part 2.</p>
   </div>
 </div>

@@ -1,51 +1,54 @@
 <div class="slide-content">
   <div class="slide-number-badge">3</div>
-  <h2>ReWOO <span class="counter-badge green">2&ndash;3 LLM calls</span></h2>
-  <p><strong>Reasoning WithOut Observation</strong> &mdash; model tworzy <strong>kompletny plan z gory</strong> przed wykonaniem jakiegokolwiek narzedzia. Potem narzedzia dzialaja <em>r&oacute;wnolegle</em>, a solver laczy wyniki.</p>
+  <h2>ReWOO <span class="counter-badge green">2–3 LLM calls</span></h2>
+  <p><strong>Reasoning WithOut Observation</strong> — model tworzy <strong>kompletny plan z góry</strong> przed wykonaniem jakiegokolwiek narzędzia. Potem narzędzia działają <em>równolegle</em>, a solver łączy wyniki.</p>
 
-  <h3>Faza 1: Planner</h3>
-  <pre class="diagram fragment">User: "Por&oacute;wnaj Python i Rust pod k&#261;tem wydajnosci."
-
-&#9484;&#9472;&#9472; Planner (LLM) &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9488;
-&#9474; Plan:                                               &#9474;
-&#9474;   Step 1: search("Python programming performance")  &#9474;
-&#9474;   Step 2: search("Rust programming performance")    &#9474;
-&#9474;   Step 3: Combine and compare results               &#9474;
-&#9492;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9496;</pre>
-
-  <h3 class="fragment">Faza 2: Worker (r&oacute;wnolegle!)</h3>
-  <pre class="diagram fragment">          &#9484;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9496;
-          &#9474;               &#9474;
-  &#9484;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9488;      &#9484;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9488;
-  &#9474; Tool: search &#9474;      &#9474; Tool: search &#9474;   &#8592; R&oacute;wnolegle!
-  &#9474; "Python..."  &#9474;      &#9474; "Rust..."    &#9474;
-  &#9492;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9496;      &#9492;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9496;</pre>
-
-  <h3 class="fragment">Faza 3: Solver</h3>
-  <pre class="diagram fragment">&#9484;&#9472;&#9472; Solver (LLM) &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9488;
-&#9474; Combines all observations into the final answer     &#9474;
-&#9492;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9496;</pre>
+  <pre class="diagram fragment">  ┌──────────────────────────────────────────────────────────┐
+  │  Faza 1: PLANNER (LLM)                                   │
+  │                                                          │
+  │  User: "Porównaj Python i Rust pod kątem wydajności."    │
+  │            │                                             │
+  │            ▼                                             │
+  │  Plan: 1. search("Python performance")                   │
+  │        2. search("Rust performance")                     │
+  │        3. Combine results                                │
+  └──────────────────────────┬───────────────────────────────┘
+                             │
+         ┌───────────────────▼────────────────────┐
+         │  Faza 2: WORKER (równolegle!)           │
+         │                                         │
+         │  ┌──────────────┐  ┌──────────────┐     │
+         │  │ search       │  │ search       │     │
+         │  │ "Python..."  │  │ "Rust..."    │     │
+         │  └──────┬───────┘  └──────┬───────┘     │
+         │         └────────┬────────┘             │
+         └──────────────────┼──────────────────────┘
+                            │
+         ┌──────────────────▼──────────────────────┐
+         │  Faza 3: SOLVER (LLM)                    │
+         │  Łączy obserwacje → ostateczna odpowiedź │
+         └──────────────────────────────────────────┘</pre>
 
   <div class="two-columns fragment">
     <div class="column strengths">
       <h4>Zalety</h4>
       <ul>
-        <li>Mniej wywolan LLM &mdash; tylko 2-3 (planner + solver)</li>
-        <li>R&oacute;wnoleglosc &mdash; narzedzia dzialaja jednoczesnie</li>
-        <li>Nizszy koszt &mdash; mniej token&oacute;w</li>
+        <li>Mniej wywołań LLM — tylko 2-3 (planner + solver)</li>
+        <li>Równoległość — narzędzia działają jednocześnie</li>
+        <li>Niższy koszt — mniej tokenów</li>
       </ul>
     </div>
     <div class="column weaknesses">
       <h4>Wady</h4>
       <ul>
-        <li>Brak adaptacji &mdash; plan jest stay</li>
-        <li>Jakosc planu = jakosc wyniku</li>
+        <li>Brak adaptacji — plan jest stały</li>
+        <li>Jakość planu = jakość wyniku</li>
         <li>Wymaga modelu z planowaniem wieloetapowym</li>
       </ul>
     </div>
   </div>
 
   <div class="callout callout-info fragment">
-    <p>Najlepszy gdy kroki sa <strong>przewidywalne i niezalezne</strong>: &ldquo;por&oacute;wnaj X i Y&rdquo;, &ldquo;zbierz dane o A, B, C&rdquo;. Nie nadaje sie do zadan eksploracyjnych.</p>
+    <p>Najlepszy gdy kroki są <strong>przewidywalne i niezależne</strong>: "porównaj X i Y", "zbierz dane o A, B, C". Nie nadaje się do zadań eksploracyjnych.</p>
   </div>
 </div>

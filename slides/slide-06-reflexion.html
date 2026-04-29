@@ -1,7 +1,7 @@
 <div class="slide-content">
   <div class="slide-number-badge">5</div>
-  <h2>Reflexion <span class="counter-badge orange">2&#215; iterations</span></h2>
-  <p>Agent dziala, potem <strong>sam ocenia swoj wynik</strong>, i poprawia go. Wielokrotne rundy samokrytyki podnosza jakosc.</p>
+  <h2>Reflexion <span class="counter-badge orange">2× iterations</span></h2>
+  <p>Agent działa, potem <strong>sam ocenia swój wynik</strong>, i poprawia go. Wielokrotne rundy samokrytyki podnoszą jakość.</p>
 
   <div class="quality-meter fragment" data-quality-meter="35">
     <span class="quality-label">0%</span>
@@ -11,39 +11,51 @@
     <span class="quality-label">100%</span>
   </div>
 
-  <h3 class="fragment">Runda 1: Generowanie</h3>
-  <pre class="diagram fragment">&#9484;&#9472;&#9472; Agent (LLM) &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9488;
-&#9474; Generate initial answer              &#9474;
-&#9492;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9496;</pre>
+  <pre class="diagram fragment">  ┌──────────────────────────────────────────────────┐
+  │  Runda 1: GENERUJ                                │
+  │                                                  │
+  │  Agent (LLM) → generuje początkową odpowiedź     │
+  └──────────────────────┬───────────────────────────┘
+                         │
+           ┌─────────────▼──────────────────────────┐
+           │  EVALUATOR:                              │
+           │  "Zbyt techniczna. Brak analogii."       │
+           └─────────────┬──────────────────────────┘
+                         │
+           ┌─────────────▼──────────────────────────┐
+           │  Runda 2: POPRAW                         │
+           │                                          │
+           │  Agent (LLM) → poprawiona odpowiedź      │
+           └─────────────┬────────────────────────────┘
+                         │
+           ┌─────────────▼──────────────────────────┐
+           │  EVALUATOR:                              │
+           │  "Dobrze. Jasne i przystępne."            │
+           └──────────────────────────────────────────┘</pre>
 
   <div class="callout callout-warning fragment" data-quality-meter="60">
-    <p><strong>Evaluator:</strong> &ldquo;Odpowiedz zbyt techniczna. Brak analogii z zycia codziennego.&rdquo;</p>
+    <p><strong>Evaluator (runda 1):</strong> "Odpowiedź zbyt techniczna. Brak analogii z życia codziennego."</p>
   </div>
 
-  <h3 class="fragment">Runda 2: Poprawa</h3>
-  <pre class="diagram fragment">&#9484;&#9472;&#9472; Agent (LLM) &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9488;
-&#9474; Revised answer with analogies        &#9474;
-&#9492;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9496;</pre>
-
   <div class="callout callout-tip fragment" data-quality-meter="90">
-    <p><strong>Evaluator:</strong> &ldquo;Dobrze. Jasne i przystepne.&rdquo;</p>
+    <p><strong>Evaluator (runda 2):</strong> "Dobrze. Jasne i przystępne."</p>
   </div>
 
   <div class="two-columns fragment">
     <div class="column strengths">
       <h4>Zalety</h4>
       <ul>
-        <li>Wyzsza jakosc &mdash; iteracyjne poprawki</li>
-        <li>Samonaprawiajacy &mdash; lapie halucynacje</li>
-        <li>Dziala z dowolnym modelem bazowym</li>
+        <li>Wyższa jakość — iteracyjne poprawki</li>
+        <li>Samonaprawiający — łapie halucynacje</li>
+        <li>Działa z dowolnym modelem bazowym</li>
       </ul>
     </div>
     <div class="column weaknesses">
       <h4>Wady</h4>
       <ul>
-        <li>Drogi &mdash; 2x wiecej wywolan LLM na runde</li>
-        <li>Wolny &mdash; op&oacute;znienie rosnie z kazda runda</li>
-        <li>Jakosc oceny zalezy od modelu</li>
+        <li>Drogi — 2x więcej wywołań LLM na rundę</li>
+        <li>Wolny — opóźnienie rośnie z każdą rundą</li>
+        <li>Jakość oceny zależy od modelu</li>
       </ul>
     </div>
   </div>

@@ -1,49 +1,53 @@
 <div class="slide-content">
   <div class="slide-number-badge">6</div>
-  <h2>LATS <span class="counter-badge orange">N &#215; branches</span></h2>
-  <p><strong>Language Agent Tree Search</strong> &mdash; agent eksploruje <strong>wiele sciezek rozumowania</strong> jednoczesnie, oceniajac kazda i cofajac sie z slepych zau&lstrok;kow.</p>
+  <h2>LATS <span class="counter-badge orange">N × branches</span></h2>
+  <p><strong>Language Agent Tree Search</strong> — agent eksploruje <strong>wiele ścieżek rozumowania</strong> jednocześnie, oceniając każdą i cofając się ze ślepych zaułków.</p>
 
-  <h3 class="fragment">Drzewo wyszukiwania</h3>
-  <pre class="diagram fragment">User: "Rozwiaz problem matematyczny: ..."
-
-                    &#9484;&#9472;&#9472; Start &#9472;&#9472;&#9488;
-                   /           \
-          Path A: "use algebra"  Path B: "try substitution"
-                /        \              \
-    A1: result=3 &#10003;    A2: error    B1: result=3 &#10003;
-                                   /          \
-                              B1a: verify &#10003;   B1b: edge case
-                                                   &#9474;
-                                             backtrack &#8594; B1a is best</pre>
+  <pre class="diagram fragment">                     ┌──────────┐
+                     │  Start   │
+                     └────┬─────┘
+                    ┌─────┴──────┐
+                    ▼            ▼
+            ┌──────────────┐ ┌────────────────┐
+            │ Path A       │ │ Path B         │
+            │ (Algebra)    │ │ (Substitution) │
+            └──────┬───────┘ └───────┬────────┘
+                   ▼                 ▼
+            ┌──────────────┐ ┌────────────────┐
+            │ A1: Result ✓ │ │ B1: Verify ✓   │
+            └──────┬───────┘ └───────┬────────┘
+                   │                 │
+                   ▼                 ▼
+              SOLVED ✅          SOLVED ✅</pre>
 
   <ol class="steps">
-    <li class="fragment">LLM generuje wiele mozliwych akcji (galezie)</li>
-    <li class="fragment">Kazda galaz jest oceniana (scoring LLM lub wynik narzedzia)</li>
-    <li class="fragment">Obiecujace galezie sa eksplorowane glebiej</li>
-    <li class="fragment">Slepe zau&lstrok;ki sa odcinane (backtracking)</li>
-    <li class="fragment">Najlepsza sciezka do rozwiazania jest wybierana</li>
+    <li class="fragment">LLM generuje wiele możliwych akcji (gałęzi)</li>
+    <li class="fragment">Każda gałąź jest oceniana (scoring LLM lub wynik narzędzia)</li>
+    <li class="fragment">Obiecujące gałęzie są eksplorowane głębiej</li>
+    <li class="fragment">Ślepe zaułki są odcinane (backtracking)</li>
+    <li class="fragment">Najlepsza ścieżka do rozwiązania jest wybierana</li>
   </ol>
 
   <div class="two-columns fragment">
     <div class="column strengths">
       <h4>Zalety</h4>
       <ul>
-        <li>Wiele podejsc do tego samego problemu</li>
-        <li>Wbudowane cofanie z blednych sciezek</li>
-        <li>Czesto lepsze rozwiazania niz single-path</li>
+        <li>Wiele podejść do tego samego problemu</li>
+        <li>Wbudowane cofanie z błędnych ścieżek</li>
+        <li>Często lepsze rozwiązania niż single-path</li>
       </ul>
     </div>
     <div class="column weaknesses">
       <h4>Wady</h4>
       <ul>
-        <li>Bardzo drogi &mdash; wiele sciezek, kazda z LLM</li>
+        <li>Bardzo drogi — wiele ścieżek, każda z LLM</li>
         <li>Trudny w implementacji</li>
-        <li>Powolny &mdash; wiele sciezek ewaluowanych sekwencyjalnie</li>
+        <li>Powolny — wiele ścieżek ewaluowanych sekwencyjnie</li>
       </ul>
     </div>
   </div>
 
   <div class="callout callout-warning fragment">
-    <p>Zarezerwowany dla <strong>zlozonych zadan reasoningowych</strong>: matematyka, logika, planowanie. Overkill dla wiekszosci zadan informacyjnych.</p>
+    <p>Zarezerwowany dla <strong>złożonych zadań reasoningowych</strong>: matematyka, logika, planowanie. Overkill dla większości zadań informacyjnych.</p>
   </div>
 </div>
