@@ -1,27 +1,28 @@
 <div class="slide-content">
   <div class="slide-number-badge">4</div>
-  <h2>Plan-and-Execute <span class="counter-badge orange">2N LLM calls</span></h2>
-  <p>Dwie fazy: <strong>planer</strong> (LLM) dekomponuje zadanie na kroki, <strong>executor</strong> wykonuje każdy krok sekwencyjnie. Planer może poprawiać plan po każdym kroku.</p>
+  <h2>Plan-and-Execute <span class="counter-badge orange">Ilość zapytań: 2N / cykl</span></h2>
+  <p>Dwie fazy: <strong>planner</strong> (LLM) dekomponuje zadanie na kroki, <strong>egzekutor</strong> wykonuje każdy
+    krok sekwencyjnie. Planner może poprawiać plan po każdym kroku.</p>
 
   <div class="exercise-badge fragment">▶ Ćwiczenie 4 (unified workflow)</div>
 
   <pre class="diagram fragment">  User: "Napisz raport o stanie AI w Polsce."
            │
            ▼
-  ┌─────────────────────────────────────────────────────┐
+  ┌──────────────────────────────────────────────────────┐
   │  PLANNER (LLM) — dekomponuje na kroki                │
   │                                                      │
-  │  Step 1: Research companies                           │
-  │  Step 2: Research education                           │
-  │  Step 3: Research initiatives                         │
+  │  Step 1: Research companies                          │
+  │  Step 2: Research education                          │
+  │  Step 3: Research initiatives                        │
   │  Step 4: Combine into report                         │
-  └──────────────────────┬──────────────────────────────┘
+  └──────────────────────┬───────────────────────────────┘
                          │
-           ┌─────────────▼─────────────────────┐
+           ┌─────────────▼──────────────────────┐
            │  EXECUTOR — krok po kroku          │
            │                                    │
            │  Step 1 → result1                  │
-           │    │  (planer może poprawić plan)  │
+           │    │  (planner może poprawić plan) │
            │  Step 2 → result2                  │
            │    │                               │
            │  Step 3 → result3                  │
@@ -34,21 +35,22 @@
       <h4>Zalety</h4>
       <ul>
         <li>Obsługuje złożone, wieloetapowe zadania</li>
-        <li>Planer adaptuje plan do wyników</li>
-        <li>Jasny podział ról: planowanie vs. wykonanie</li>
+        <li>Planner adaptuje plan do uzyskanych wyników</li>
+        <li>Jasny podział ról: planowanie vs egzekucja</li>
       </ul>
     </div>
     <div class="column weaknesses">
       <h4>Wady</h4>
       <ul>
-        <li>Wyższe opóźnienie — 2 LLM per cykl</li>
+        <li>Wyższe opóźnienie — 2N zapytań na cykl</li>
         <li>Przerost dla prostych zadań</li>
-        <li>Błędy planowania kumulują się</li>
+        <li>Błędy planowania kumulują się w całym procesie</li>
       </ul>
     </div>
   </div>
 
   <div class="callout callout-tip fragment">
-    <p><strong>Ćwiczenie 4</strong> używa tego wzorca — ReAct orchestrator decyduje kiedy wywołać agenta badawczego, a kiedy crew pisarski.</p>
+    <p><strong>Ćwiczenie 4</strong> używa tego wzorca — ReAct orchestrator decyduje kiedy wywołać agenta badawczego, a
+      kiedy CrewAI odpowiedzialne za pisanie raportu.</p>
   </div>
 </div>

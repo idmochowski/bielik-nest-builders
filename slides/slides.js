@@ -9,7 +9,7 @@ const SLIDES = [
   'slide-01-overview.html',
   'slide-02-react.html',
   'slide-03-tool-calling.html',
-  'slide-04-rewod.html',
+  'slide-04-rewoo.html',
   'slide-05-plan-execute.html',
   'slide-06-reflexion.html',
   'slide-07-lats.html',
@@ -45,15 +45,20 @@ const fragmentDots = document.getElementById('fragment-dots');
 // ─── Initialize ──────────────────────────────
 
 document.addEventListener('DOMContentLoaded', async () => {
-  // Try fetching first slide to detect if we need embedded mode
-  try {
-    const resp = await fetch(SLIDES[0]);
-    if (!resp.ok) throw new Error('fetch failed');
-    useEmbeddedSlides = false;
-  } catch (e) {
-    // file:// protocol — use embedded slides
+  // Detect file:// protocol before attempting fetch (avoids CORS error)
+  if (window.location.protocol === 'file:') {
     useEmbeddedSlides = true;
     loadEmbeddedSlides();
+  } else {
+    try {
+      const resp = await fetch(SLIDES[0]);
+      if (!resp.ok) throw new Error('fetch failed');
+      useEmbeddedSlides = false;
+    } catch (e) {
+      // HTTP server unreachable — use embedded slides
+      useEmbeddedSlides = true;
+      loadEmbeddedSlides();
+    }
   }
 
   loadSlide(0);

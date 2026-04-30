@@ -1,21 +1,21 @@
 <div class="slide-content">
   <div class="slide-number-badge">2</div>
   <h2>Tool Calling Agent <span class="counter-badge green">vs ReAct</span></h2>
-  <p>Model używa <strong>natywnego API</strong> do wywoływania funkcji — strukturalny JSON zamiast parsowania tekstu.</p>
+  <p>Model używa <strong>natywnego API</strong> do wywoływania funkcji przy pomocy wbudowaych parserów.</p>
 
   <pre class="diagram fragment">  User: "Jaka jest pogoda w Warszawie?"
            │
            ▼
-  ┌──────────────────────────────────────────────────┐
-  │  LLM → JSON (natywne tool calling):              │
+  ┌────────────────────────────────────────────────────┐
+  │  LLM → JSON (natywne tool calling):                │
   │  {"name":"get_weather", "args":{"city":"Warszawa"}}│
-  └──────────────────────┬───────────────────────────┘
+  └──────────────────────┬─────────────────────────────┘
                          │
-           ┌─────────────▼─────────────────────┐
+           ┌─────────────▼──────────────────────┐
            │  Tool → {"temp": 12, "słonecznie"} │
-           └─────────────┬─────────────────────┘
+           └─────────────┬──────────────────────┘
                          │
-           ┌─────────────▼──────────────────────────┐
+           ┌─────────────▼───────────────────────────┐
            │  LLM: W Warszawie jest 12°C, słonecznie.│
            └─────────────────────────────────────────┘</pre>
 
@@ -23,9 +23,9 @@
     <div class="column strengths">
       <h4>Zalety</h4>
       <ul>
-        <li>Bardziej niezawodny — brak parsowania tekstu</li>
+        <li>Wyższa niezawodność w porównaniu z ReAct</li>
         <li>Szybszy — brak narzutu promptu ReAct</li>
-        <li>Równoległe wywołania narzędzi</li>
+        <li>Możliwe równoległe wywołania narzędzi</li>
       </ul>
     </div>
     <div class="column weaknesses">
@@ -44,6 +44,6 @@
   llm_name: bielik</pre>
 
   <div class="callout callout-warning fragment">
-    <p>Wymaga vLLM skonfigurowanego z <code>--enable-auto-tool-choice</code> i customowym parserem narzędzi.</p>
+    <p>Wymaga LLMa kompatybilnego wspierającego natywny tool calling.</p>
   </div>
 </div>

@@ -1,7 +1,8 @@
 <div class="slide-content">
   <div class="slide-number-badge">5</div>
-  <h2>Reflexion <span class="counter-badge orange">2× iterations</span></h2>
-  <p>Agent działa, potem <strong>sam ocenia swój wynik</strong>, i poprawia go. Wielokrotne rundy samokrytyki podnoszą jakość.</p>
+  <h2>Reflexion <span class="counter-badge orange">Ilość zapytań: 2x ilość iteracji</span></h2>
+  <p>Agent wykonuje zadanie, następnie <strong>sam ocenia swój wynik</strong> i poprawia go. Wielokrotne rundy samokrytyki podnoszą jakość.</p>
+  <p>Dla najlepszych wyników sugeruję stosowanie osobnego modelu do <strong>egzekucji</strong>, osobnego do <strong>oceny i ewaluacji</strong> wyników pracy agenta.</p>
 
   <div class="quality-meter fragment" data-quality-meter="35">
     <span class="quality-label">0%</span>
@@ -11,26 +12,27 @@
     <span class="quality-label">100%</span>
   </div>
 
-  <pre class="diagram fragment">  ┌──────────────────────────────────────────────────┐
+  <pre class="diagram fragment">  
+  ┌──────────────────────────────────────────────────┐
   │  Runda 1: GENERUJ                                │
   │                                                  │
   │  Agent (LLM) → generuje początkową odpowiedź     │
   └──────────────────────┬───────────────────────────┘
                          │
            ┌─────────────▼──────────────────────────┐
-           │  EVALUATOR:                              │
-           │  "Zbyt techniczna. Brak analogii."       │
+           │  EWALUATOR:                            │
+           │  "Zbyt techniczna. Brak analogii."     │
            └─────────────┬──────────────────────────┘
                          │
-           ┌─────────────▼──────────────────────────┐
+           ┌─────────────▼────────────────────────────┐
            │  Runda 2: POPRAW                         │
            │                                          │
            │  Agent (LLM) → poprawiona odpowiedź      │
            └─────────────┬────────────────────────────┘
                          │
-           ┌─────────────▼──────────────────────────┐
-           │  EVALUATOR:                              │
-           │  "Dobrze. Jasne i przystępne."            │
+           ┌─────────────▼────────────────────────────┐
+           │  EWALUATOR:                              │
+           │  "Dobrze. Jasne i przystępne."           │
            └──────────────────────────────────────────┘</pre>
 
   <div class="callout callout-warning fragment" data-quality-meter="60">
@@ -38,24 +40,24 @@
   </div>
 
   <div class="callout callout-tip fragment" data-quality-meter="90">
-    <p><strong>Evaluator (runda 2):</strong> "Dobrze. Jasne i przystępne."</p>
+    <p><strong>Evaluator (runda 2):</strong> "Dobrze. Jasne i przystępne, akceptuję tę odpowiedź."</p>
   </div>
 
   <div class="two-columns fragment">
     <div class="column strengths">
       <h4>Zalety</h4>
       <ul>
-        <li>Wyższa jakość — iteracyjne poprawki</li>
-        <li>Samonaprawiający — łapie halucynacje</li>
+        <li>Wyższa jakość dzięki iteracyjnym poprawkom</li>
+        <li>Samonaprawiający — redukuje halucynacje</li>
         <li>Działa z dowolnym modelem bazowym</li>
       </ul>
     </div>
     <div class="column weaknesses">
       <h4>Wady</h4>
       <ul>
-        <li>Drogi — 2x więcej wywołań LLM na rundę</li>
-        <li>Wolny — opóźnienie rośnie z każdą rundą</li>
-        <li>Jakość oceny zależy od modelu</li>
+        <li>Wysoki koszt — 2x więcej wywołań LLM na rundę</li>
+        <li>Czas działania — opóźnienie rośnie z każdą rundą iteracji</li>
+        <li>Jakość oceny zależy od modelu dokonującego ewaluacji</li>
       </ul>
     </div>
   </div>

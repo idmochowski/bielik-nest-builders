@@ -1,41 +1,41 @@
 <div class="slide-content">
   <h2>Kluczowe wnioski</h2>
-  <p>Nie ma „najlepszej” architektury agenta. Wybór zależy od kontekstu:</p>
+  <p>Nie ma najlepszej architektury agenta czy całego systemu. Wybór zależy od kontekstu i zadania:</p>
 
   <div class="takeaway-grid">
     <div class="takeaway-card fragment">
       <div class="takeaway-icon">🎯</div>
       <div>
         <h4>Złożoność zadania</h4>
-        <p>Proste → Tool Calling / ReAct<br>Złożone wieloetapowe → Plan-and-Execute</p>
+        <p>Proste → Tool Calling / ReAct<br>Złożone i wieloetapowe → Plan-and-Execute</p>
       </div>
     </div>
     <div class="takeaway-card fragment">
       <div class="takeaway-icon">🧠</div>
       <div>
-        <h4>Możliwości modelu</h4>
-        <p>Małe modele (7B) → ReAct<br>ReWOO / LATS → silniejsze planowanie</p>
+        <h4>Możliwości i rozmiar modelu</h4>
+        <p>Małe modele (około 10B) → ReAct<br>Większe modele -> ReWOO / LATS</p>
       </div>
     </div>
     <div class="takeaway-card fragment">
       <div class="takeaway-icon">⚡</div>
       <div>
-        <h4>Tolerancja opóźnień</h4>
-        <p>Real-time → Tool Calling<br>Batch → Reflexion, LATS</p>
+        <h4>Czas przetwarzania i odpowiedzi (latencja)</h4>
+        <p>Real-time → Tool Calling<br>Przetwarzanie partiami → Reflexion, LATS</p>
       </div>
     </div>
     <div class="takeaway-card fragment">
       <div class="takeaway-icon">💰</div>
       <div>
-        <h4>Budżet kosztów</h4>
-        <p>Oszczędnie → ReWOO (2-3 wywołania)<br>Jakość za wszelką cenę → Reflexion, LATS</p>
+        <h4>Koszt rozwiązania</h4>
+        <p>Niski → ReWOO (2-3 wywołania)<br>Wysoki → Reflexion, LATS</p>
       </div>
     </div>
     <div class="takeaway-card fragment">
       <div class="takeaway-icon">🔗</div>
       <div>
         <h4>Orkiestracja</h4>
-        <p>Jedno zadanie → dowolny wzorzec<br>Wiele capabilities → Multi-Agent Router</p>
+        <p>Jedno zadanie → dowolny wzorzec<br>Wiele zadań → Multi-Agent Router</p>
       </div>
     </div>
     <div class="takeaway-card fragment">

@@ -1,7 +1,7 @@
 <div class="slide-content">
   <div class="slide-number-badge">1</div>
   <h2>ReAct <span class="gradient-text">(Reasoning + Acting)</span></h2>
-  <p>Agent przeplata <strong>myślenie</strong> i <strong>działanie</strong> w pętli. Każdy krok: model rozumuje, wykonuje akcję, obserwuje wynik, i rozumuje ponownie.</p>
+  <p>Agent przeplata <strong>myślenie</strong> i <strong>działanie</strong> w pętli. Model rozumuje, wykonuje akcję, obserwuje wynik i rozumuje ponownie.</p>
 
   <pre class="diagram fragment">  User: "Kim był Mikołaj Kopernik?"
            │
@@ -15,9 +15,9 @@
            │  Tool → artykuł Wikipedii  │
            └─────────────┬──────────────┘
                          │
-           ┌─────────────▼──────────────────────┐
+           ┌─────────────▼───────────────────────┐
            │  Observation: [treść o Koperniku]   │
-           │  Thought: Mam wystarczająco info    │
+           │  Thought: Mam wystarczające info    │
            │  Final Answer: Mikołaj Kopernik...  │
            └─────────────────────────────────────┘</pre>
 
@@ -25,17 +25,17 @@
     <div class="column strengths">
       <h4>Zalety</h4>
       <ul>
-        <li>Transparentny — każdy krok rozumowania widoczny</li>
-        <li>Elastyczny — model adaptuje plan do wyników</li>
-        <li>Działa z modelami tekstowymi (jak Bielik 7B)</li>
+        <li>Transparentny — każdy krok rozumowania jest widoczny</li>
+        <li>Elastyczny — model adaptuje plan realizacji do wyników</li>
+        <li>Działa z modelami tekstowymi (jak Bielik-Minitron-7B)</li>
       </ul>
     </div>
     <div class="column weaknesses">
       <h4>Wady</h4>
       <ul>
-        <li>Token-heavy — pełna historia w każdym zapytaniu</li>
-        <li>Może zapętlić się bez Final Answer</li>
-        <li>Sekwencyjny — narzędzia jedno po drugim</li>
+        <li>Wysokie zużycie tokenów — pełna historia w każdym zapytaniu</li>
+        <li>Może zapętlić się bez udzielenia odpowiedzi</li>
+        <li>Sekwencyjny — narzędzia wywoływane są jedno po drugim</li>
       </ul>
     </div>
   </div>
@@ -47,6 +47,6 @@
   max_tool_calls: 5</pre>
 
   <div class="callout callout-tip callout-pulse fragment">
-    <p><strong>Używamy w tym warsztacie!</strong> ReAct działa niezawodnie z Bielik-Minitron-7B bez natywnego wsparcia tool calling. Ćwiczenia 1–4 w Part 2.</p>
+    <p><strong>Agentów ReAct poznamy w trakcie warsztatów.</strong><br>ReAct działa bardzo dobrze z Bielik-Minitron-7B bez natywnego wsparcia tool calling. Ćwiczenia 1 - 4 w części 2.</p>
   </div>
 </div>

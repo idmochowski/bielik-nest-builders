@@ -1,41 +1,44 @@
 <div class="slide-content">
   <div class="slide-number-badge">7</div>
   <h2>Multi-Agent Orchestration</h2>
-  <p>Wzorce kompozycji <strong>wielu agentów</strong> w większe systemy. To co NAT YAML composition umożliwia w Ćwiczeniu 4.</p>
+  <p>Wzorzec kompozycji <strong>wielu agentów</strong> w większe systemy. To co NeMo Agent Toolkit umożliwia w ćwiczeniu 4.</p>
 
   <div class="patterns-grid">
     <div class="pattern-card fragment">
-      <h4>Router (Hub-and-Spoke) <span class="exercise-badge" style="margin:0;font-size:10px;padding:2px 8px;">▶ Ćw. 4</span></h4>
-      <pre class="diagram">         ┌──────────────┐
+      <h4>Router <span class="exercise-badge" style="margin:0;font-size:10px;padding:2px 8px;">▶ Ćw. 4</span></h4>
+      <pre class="diagram">         
+         ┌──────────────┐
          │ Orchestrator │
          └──┬───┬───┬───┘
       ┌─────┘   │   └─────┐
       ▼         ▼         ▼
   Research   Write     Code</pre>
-      <p>Jeden orchestrator kieruje zapytanie do specjalisty. Wzorzec z Ćwiczenia 4.</p>
+      <p>Jeden orkiestrator kieruje zapytanie do specjalisty w danej dziedzinie. Wzorzec z ćwiczenia 4.</p>
     </div>
     <div class="pattern-card fragment">
-      <h4>Sequential Pipeline</h4>
+      <h4>Sekwencyjny</h4>
       <pre class="diagram">  Research → Analyze → Write</pre>
-      <p>Agenci przekazują wyniki w łańcuchu. Deterministyczny — bez decyzji routingu.</p>
+      <p>Agenci przekazują wyniki w łańcuchu, jeden po drugim. Deterministyczny, bez decyzji o routingu zapytań.</p>
     </div>
     <div class="pattern-card fragment">
-      <h4>Parallel Fan-out</h4>
-      <pre class="diagram">       ┌─ Agent 1 ─┐
+      <h4>Równoległy</h4>
+      <pre class="diagram">       
+       ┌─ Agent 1 ─┐
   Split┤  Agent 2  ├┤ Merge
        └─ Agent 3 ─┘</pre>
-      <p>Wielu agentów pracuje równolegle, potem agregacja. Szybszy dla niezależnych podzadań.</p>
+      <p>Wielu agentów pracuje równolegle, potem następuje agregacja wyników ich pracy. Szybszy dla niezależnych podzadań.</p>
     </div>
     <div class="pattern-card fragment">
-      <h4>Hierarchical</h4>
-      <pre class="diagram">         Manager
+      <h4>Hierarchiczny</h4>
+      <pre class="diagram">         
+         Manager
         ┌───┴───┐
      Team1     Team2</pre>
-      <p>Wielopoziomowa delegacja. Skalowalny do dużych, złożonych workflows.</p>
+      <p>Wielopoziomowa delegacja decyzji i zadań. Skalowalny do dużych, złożonych systemów.</p>
     </div>
   </div>
 
   <div class="callout callout-info fragment">
-    <p><strong>Kiedy który?</strong> Router → różne capabilities, Pipeline → stałe etapy, Parallel → niezależne podzadania, Hierarchical → duże systemy.</p>
+    <p><strong>Kiedy zastosować daną strukturę?</strong> Router → różne, odseparowane możliwości, Sekwencyjny → stałe etapy (workflow), Równoległy → niezależne podzadania, Hierarchiczny → duże systemy.</p>
   </div>
 </div>
