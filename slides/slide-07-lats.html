@@ -1,0 +1,54 @@
+<div class="slide-content">
+  <div class="slide-number-badge">6</div>
+  <h2>LATS <span class="counter-badge orange">Ilość zapytań: N * ilość gałęzi</span></h2>
+  <p><strong>Language Agent Tree Search</strong> — agent eksploruje <strong>wiele ścieżek rozumowania</strong> jednocześnie, oceniając każdą i cofając się ze ślepych zaułków.</p>
+
+  <pre class="diagram fragment">                     
+                     ┌──────────┐
+                     │  Start   │
+                     └────┬─────┘
+                    ┌─────┴──────┐
+                    ▼            ▼
+            ┌──────────────┐ ┌────────────────┐
+            │ Path A       │ │ Path B         │
+            │ (Algebra)    │ │ (Substitution) │
+            └──────┬───────┘ └───────┬────────┘
+                   ▼                 ▼
+            ┌──────────────┐ ┌────────────────┐
+            │ A1: Result ✓ │ │ B1: Verify ✓   │
+            └──────┬───────┘ └───────┬────────┘
+                   │                 │
+                   ▼                 ▼
+              SOLVED ✅          SOLVED ✅</pre>
+
+  <ol class="steps">
+    <li class="fragment">LLM generuje wiele możliwych akcji (gałęzi)</li>
+    <li class="fragment">Każda gałąź jest oceniana (scoring LLMem lub wynik deterministycznego narzędzia)</li>
+    <li class="fragment">Obiecujące gałęzie są eksplorowane głębiej</li>
+    <li class="fragment">Ślepe zaułki są odcinane (backtracking)</li>
+    <li class="fragment">Najlepsza ścieżka rozwiązania jest wybierana jako finalna odpowiedź</li>
+  </ol>
+
+  <div class="two-columns fragment">
+    <div class="column strengths">
+      <h4>Zalety</h4>
+      <ul>
+        <li>Wiele podejść do tego samego problemu</li>
+        <li>Wbudowane cofanie z błędnych ścieżek</li>
+        <li>Często lepsze rozwiązania niż eksplorowanie pojedynczej ścieżki</li>
+      </ul>
+    </div>
+    <div class="column weaknesses">
+      <h4>Wady</h4>
+      <ul>
+        <li>Bardzo drogi — wiele ścieżek, każda wymaga pracy LLMa</li>
+        <li>Skomplikowany i trudny w implementacji</li>
+        <li>Powolny — wiele ścieżek ewaluowanych sekwencyjnie</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="callout callout-warning fragment">
+    <p>Zarezerwowany dla <strong>złożonych zadań reasoningowych</strong>: matematyka, logika, planowanie. Overkill dla większości zadań informacyjnych.</p>
+  </div>
+</div>

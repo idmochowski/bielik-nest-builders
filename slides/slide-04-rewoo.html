@@ -1,0 +1,58 @@
+<div class="slide-content">
+  <div class="slide-number-badge">3</div>
+  <h2>ReWOO <span class="counter-badge green">Ilość zapytań: 2-3 wywołania LLM</span></h2>
+  <p><strong>Reasoning WithOut Observation</strong> — model językowy tworzy <strong>kompletny plan realizacji
+      zadania</strong> przed rozpoczęciem pracy. Następnie jest w stanie wywołać poszczególne narzędzia
+    <em>równolegle</em>, aby na koniec połączyć otrzymane wyniki.</p>
+
+  <pre class="diagram fragment">
+  ┌──────────────────────────────────────────────────────────┐
+  │  Faza 1: PLANNER (LLM)                                   │
+  │                                                          │
+  │  User: "Porównaj Python i Rust pod kątem wydajności."    │
+  │            │                                             │
+  │            ▼                                             │
+  │  Plan: 1. search("Python performance")                   │
+  │        2. search("Rust performance")                     │
+  │        3. Combine results                                │
+  └──────────────────────────┬───────────────────────────────┘
+                             │
+         ┌───────────────────▼─────────────────────┐
+         │  Faza 2: WORKER (równolegle)            │
+         │                                         │
+         │  ┌──────────────┐  ┌──────────────┐     │
+         │  │ search       │  │ search       │     │
+         │  │ "Python..."  │  │ "Rust..."    │     │
+         │  └──────┬───────┘  └──────┬───────┘     │
+         │         └────────┬────────┘             │
+         └──────────────────┼──────────────────────┘
+                            │
+         ┌──────────────────▼───────────────────────┐
+         │  Faza 3: SOLVER (LLM)                    │
+         │  Łączy obserwacje → ostateczna odpowiedź │
+         └──────────────────────────────────────────┘</pre>
+
+  <div class="two-columns fragment">
+    <div class="column strengths">
+      <h4>Zalety</h4>
+      <ul>
+        <li>Mniej wywołań LLM — tylko 2-3 (planner + solver)</li>
+        <li>Równoległość — narzędzia działają jednocześnie</li>
+        <li>Niższy koszt — mniej wywołań -> mniej tokenów</li>
+      </ul>
+    </div>
+    <div class="column weaknesses">
+      <h4>Wady</h4>
+      <ul>
+        <li>Brak adaptacji — plan jest stały</li>
+        <li>Jakość planu = jakość wyniku</li>
+        <li>Wymaga modelu o wyższej mocy i jakości</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="callout callout-info fragment">
+    <p>Najlepszy gdy kroki są <strong>przewidywalne i niezależne</strong>, na przykład: "porównaj X i Y", "zbierz dane o A, B, C".
+      Nie nadaje się do zadań eksploracyjnych i researchowych.</p>
+  </div>
+</div>

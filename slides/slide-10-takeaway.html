@@ -1,0 +1,54 @@
+<div class="slide-content">
+  <h2>Kluczowe wnioski</h2>
+  <p>Nie ma najlepszej architektury agenta czy całego systemu. Wybór zależy od kontekstu i zadania:</p>
+
+  <div class="takeaway-grid">
+    <div class="takeaway-card fragment">
+      <div class="takeaway-icon">🎯</div>
+      <div>
+        <h4>Złożoność zadania</h4>
+        <p>Proste → Tool Calling / ReAct<br>Złożone i wieloetapowe → Plan-and-Execute</p>
+      </div>
+    </div>
+    <div class="takeaway-card fragment">
+      <div class="takeaway-icon">🧠</div>
+      <div>
+        <h4>Możliwości i rozmiar modelu</h4>
+        <p>Małe modele (około 10B) → ReAct<br>Większe modele -> ReWOO / LATS</p>
+      </div>
+    </div>
+    <div class="takeaway-card fragment">
+      <div class="takeaway-icon">⚡</div>
+      <div>
+        <h4>Czas przetwarzania i odpowiedzi (latencja)</h4>
+        <p>Real-time → Tool Calling<br>Przetwarzanie partiami → Reflexion, LATS</p>
+      </div>
+    </div>
+    <div class="takeaway-card fragment">
+      <div class="takeaway-icon">💰</div>
+      <div>
+        <h4>Koszt rozwiązania</h4>
+        <p>Niski → ReWOO (2-3 wywołania)<br>Wysoki → Reflexion, LATS</p>
+      </div>
+    </div>
+    <div class="takeaway-card fragment">
+      <div class="takeaway-icon">🔗</div>
+      <div>
+        <h4>Orkiestracja</h4>
+        <p>Jedno zadanie → dowolny wzorzec<br>Wiele zadań → Multi-Agent Router</p>
+      </div>
+    </div>
+    <div class="takeaway-card fragment">
+      <div class="takeaway-icon">📖</div>
+      <div>
+        <h4>Dokumentacja</h4>
+        <p>Szczegóły: <code>docs/agent-types.md</code><br>Konfiguracja NAT: poszczególne <code>config.yaml</code></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout callout-tip callout-pulse fragment">
+    <p>Na tym warsztacie używamy <strong>ReAct</strong>, bo działa niezawodnie z Bielik-Minitron-7B bez natywnego wsparcia tool calling, a jego transparentna pętla rozumowania jest idealna do nauki i debugowania.</p>
+  </div>
+</div>
+

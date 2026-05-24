@@ -1,0 +1,56 @@
+<div class="slide-content">
+  <div class="slide-number-badge">4</div>
+  <h2>Plan-and-Execute <span class="counter-badge orange">Ilość zapytań: 2N / cykl</span></h2>
+  <p>Dwie fazy: <strong>planner</strong> (LLM) dekomponuje zadanie na kroki, <strong>egzekutor</strong> wykonuje każdy
+    krok sekwencyjnie. Planner może poprawiać plan po każdym kroku.</p>
+
+  <div class="exercise-badge fragment">▶ Ćwiczenie 4 (unified workflow)</div>
+
+  <pre class="diagram fragment">  User: "Napisz raport o stanie AI w Polsce."
+           │
+           ▼
+  ┌──────────────────────────────────────────────────────┐
+  │  PLANNER (LLM) — dekomponuje na kroki                │
+  │                                                      │
+  │  Step 1: Research companies                          │
+  │  Step 2: Research education                          │
+  │  Step 3: Research initiatives                        │
+  │  Step 4: Combine into report                         │
+  └──────────────────────┬───────────────────────────────┘
+                         │
+           ┌─────────────▼──────────────────────┐
+           │  EXECUTOR — krok po kroku          │
+           │                                    │
+           │  Step 1 → result1                  │
+           │    │  (planner może poprawić plan) │
+           │  Step 2 → result2                  │
+           │    │                               │
+           │  Step 3 → result3                  │
+           │    │                               │
+           │  Step 4 → Final Report             │
+           └────────────────────────────────────┘</pre>
+
+  <div class="two-columns fragment">
+    <div class="column strengths">
+      <h4>Zalety</h4>
+      <ul>
+        <li>Obsługuje złożone, wieloetapowe zadania</li>
+        <li>Planner adaptuje plan do uzyskanych wyników</li>
+        <li>Jasny podział ról: planowanie vs egzekucja</li>
+      </ul>
+    </div>
+    <div class="column weaknesses">
+      <h4>Wady</h4>
+      <ul>
+        <li>Wyższe opóźnienie — 2N zapytań na cykl</li>
+        <li>Przerost dla prostych zadań</li>
+        <li>Błędy planowania kumulują się w całym procesie</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="callout callout-tip fragment">
+    <p><strong>Ćwiczenie 4</strong> używa tego wzorca — ReAct orchestrator decyduje kiedy wywołać agenta badawczego, a
+      kiedy CrewAI odpowiedzialne za pisanie raportu.</p>
+  </div>
+</div>
