@@ -1,0 +1,49 @@
+<div class="slide-content">
+  <div class="slide-number-badge">2</div>
+  <h2>Tool Calling Agent <span class="counter-badge green">vs ReAct</span></h2>
+  <p>Model używa <strong>natywnego API</strong> do wywoływania funkcji przy pomocy wbudowaych parserów.</p>
+
+  <pre class="diagram fragment">  User: "Jaka jest pogoda w Warszawie?"
+           │
+           ▼
+  ┌────────────────────────────────────────────────────┐
+  │  LLM → JSON (natywne tool calling):                │
+  │  {"name":"get_weather", "args":{"city":"Warszawa"}}│
+  └──────────────────────┬─────────────────────────────┘
+                         │
+           ┌─────────────▼──────────────────────┐
+           │  Tool → {"temp": 12, "słonecznie"} │
+           └─────────────┬──────────────────────┘
+                         │
+           ┌─────────────▼───────────────────────────┐
+           │  LLM: W Warszawie jest 12°C, słonecznie.│
+           └─────────────────────────────────────────┘</pre>
+
+  <div class="two-columns fragment">
+    <div class="column strengths">
+      <h4>Zalety</h4>
+      <ul>
+        <li>Wyższa niezawodność w porównaniu z ReAct</li>
+        <li>Szybszy — brak narzutu promptu ReAct</li>
+        <li>Możliwe równoległe wywołania narzędzi</li>
+      </ul>
+    </div>
+    <div class="column weaknesses">
+      <h4>Wady</h4>
+      <ul>
+        <li>Wymaga wsparcia modelu + serwera (vLLM)</li>
+        <li>Mniej transparentny — rozumowanie ukryte</li>
+        <li>Mniejsze modele mogą mieć trudności</li>
+      </ul>
+    </div>
+  </div>
+
+  <pre class="config fragment">workflow:
+  _type: tool_calling_agent
+  tool_names: [wiki_search, current_datetime]
+  llm_name: bielik</pre>
+
+  <div class="callout callout-warning fragment">
+    <p>Wymaga LLMa kompatybilnego wspierającego natywny tool calling.</p>
+  </div>
+</div>

@@ -1,5 +1,5 @@
 # =============================================================
-# Exercise 2: Cost Tracking
+# Exercise 3: Evaluation & Optimization with nat eval
 # =============================================================
 
 llms:
@@ -26,14 +26,15 @@ workflow:
     - current_time
   llm_name: bielik
   max_tool_calls: 5
+  verbose: false
   parse_agent_response_max_retries: 3
   raise_on_parsing_failure: false
   additional_instructions: "Używaj jak najmniej wywołań narzędzi. Gdy masz wystarczająco informacji, natychmiast podaj Final Answer. Nie szukaj dodatkowych powiązanych tematów."
 
-general:
-  telemetry:
-    tracing:
-      phoenix:
-        _type: phoenix
-        project: bielik-cost-tracking
-        endpoint: "${PHOENIX_COLLECTOR_ENDPOINT:-http://localhost:6006/v1/traces}"
+eval:
+  general:
+    max_concurrency: 2
+    output_dir: ./.tmp/eval_results
+    dataset:
+      _type: json
+      file_path: eval_dataset.json

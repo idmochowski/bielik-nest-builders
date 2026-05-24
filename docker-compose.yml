@@ -1,0 +1,23 @@
+services:
+  workshop:
+    build: .
+    ports:
+      - "8888:8888"
+    env_file: .env
+    environment:
+      # Overrides env_file so Phoenix always points to the compose service
+      - PHOENIX_COLLECTOR_ENDPOINT=http://phoenix:6006/v1/traces
+    depends_on:
+      phoenix:
+        condition: service_started
+    volumes:
+      # Mount workshop files for live editing in Jupyter
+      # Note: workshop_agents/ is NOT mounted - custom NAT functions
+      # are installed in the image and won't change at runtime
+      - ./part2-orchestration:/workshop/part2-orchestration
+      - ./part3-profiling:/workshop/part3-profiling
+
+  phoenix:
+    image: arizephoenix/phoenix:14.2.1
+    ports:
+      - "6006:6006"

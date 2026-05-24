@@ -1,0 +1,52 @@
+<div class="slide-content">
+  <div class="slide-number-badge">1</div>
+  <h2>ReAct <span class="gradient-text">(Reasoning + Acting)</span></h2>
+  <p>Agent przeplata <strong>myślenie</strong> i <strong>działanie</strong> w pętli. Model rozumuje, wykonuje akcję, obserwuje wynik i rozumuje ponownie.</p>
+
+  <pre class="diagram fragment">  User: "Kim był Mikołaj Kopernik?"
+           │
+           ▼
+  ┌─────────────────────────────────────────────┐
+  │  Thought: Szukam w Wikipedii o Koperniku    │
+  │  Action:  wiki_search("Mikołaj Kopernik")   │
+  └──────────────────────┬──────────────────────┘
+                         │
+           ┌─────────────▼──────────────┐
+           │  Tool → artykuł Wikipedii  │
+           └─────────────┬──────────────┘
+                         │
+           ┌─────────────▼───────────────────────┐
+           │  Observation: [treść o Koperniku]   │
+           │  Thought: Mam wystarczające info    │
+           │  Final Answer: Mikołaj Kopernik...  │
+           └─────────────────────────────────────┘</pre>
+
+  <div class="two-columns fragment">
+    <div class="column strengths">
+      <h4>Zalety</h4>
+      <ul>
+        <li>Transparentny — każdy krok rozumowania jest widoczny</li>
+        <li>Elastyczny — model adaptuje plan realizacji do wyników</li>
+        <li>Działa z modelami tekstowymi (jak Bielik-Minitron-7B)</li>
+      </ul>
+    </div>
+    <div class="column weaknesses">
+      <h4>Wady</h4>
+      <ul>
+        <li>Wysokie zużycie tokenów — pełna historia w każdym zapytaniu</li>
+        <li>Może zapętlić się bez udzielenia odpowiedzi</li>
+        <li>Sekwencyjny — narzędzia wywoływane są jedno po drugim</li>
+      </ul>
+    </div>
+  </div>
+
+  <pre class="config fragment">workflow:
+  _type: react_agent
+  tool_names: [wiki_search, current_datetime]
+  llm_name: bielik
+  max_tool_calls: 5</pre>
+
+  <div class="callout callout-tip callout-pulse fragment">
+    <p><strong>Agentów ReAct poznamy w trakcie warsztatów.</strong><br>ReAct działa bardzo dobrze z Bielik-Minitron-7B bez natywnego wsparcia tool calling. Ćwiczenia 1 - 4 w części 2.</p>
+  </div>
+</div>
